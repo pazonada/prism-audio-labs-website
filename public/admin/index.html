@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Audio Plugin Competitive Analysis — Prism Audio Labs</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root{
+    --bg:#0b0e14; --panel:#121722; --panel2:#171d2b; --line:#242c3d;
+    --txt:#e7ecf5; --mut:#9aa6bd; --dim:#6b7690;
+    --a1:#ff6a3d; --a2:#ff3d7f; --a3:#7b5cff; --a4:#25d0c0; --a5:#f5c451;
+    --grad:linear-gradient(90deg,#ff6a3d,#ff3d7f,#7b5cff,#25d0c0);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+  a{color:var(--a4);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:1200px;margin:0 auto;padding:0 20px}
+  header{padding:44px 0 22px;border-bottom:1px solid var(--line);position:relative;overflow:hidden}
+  header:before{content:"";position:absolute;inset:0 0 auto 0;height:4px;background:var(--grad)}
+  .kick{letter-spacing:.22em;text-transform:uppercase;font-size:12px;color:var(--dim);margin-bottom:10px}
+  h1{margin:0 0 8px;font-size:34px;line-height:1.15;font-weight:800}
+  h1 span{background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .sub{color:var(--mut);max-width:820px;font-size:16px}
+  .meta{margin-top:14px;color:var(--dim);font-size:13px}
+  nav.tabs{position:sticky;top:0;z-index:20;background:rgba(11,14,20,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);margin-bottom:26px}
+  nav.tabs .wrap{display:flex;gap:6px;overflow-x:auto;padding:8px 20px}
+  nav.tabs button{background:none;border:0;color:var(--mut);padding:9px 14px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap}
+  nav.tabs button:hover{color:var(--txt);background:var(--panel)}
+  nav.tabs button.active{color:#fff;background:var(--panel2)}
+  section{margin-bottom:46px;scroll-margin-top:60px}
+  h2{font-size:23px;margin:0 0 6px;font-weight:800}
+  h2 .bar{display:inline-block;width:34px;height:3px;background:var(--grad);border-radius:3px;vertical-align:middle;margin-right:10px}
+  .lead{color:var(--mut);margin:0 0 20px;max-width:880px}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px}
+  .grid{display:grid;gap:16px}
+  .filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;align-items:center}
+  .filters .lbl{color:var(--dim);font-size:12px;text-transform:uppercase;letter-spacing:.12em;margin-right:4px}
+  .chip{background:var(--panel);border:1px solid var(--line);color:var(--mut);padding:6px 12px;border-radius:999px;font-size:13px;font-weight:600;cursor:pointer}
+  .chip:hover{color:var(--txt)}
+  .chip.on{background:var(--panel2);color:#fff;border-color:#46527a}
+  .chartbox{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 18px 8px}
+  .chart-h{height:440px;position:relative}
+  .legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:12px;font-size:13px;color:var(--mut)}
+  .legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:6px;vertical-align:middle}
+  .note{color:var(--dim);font-size:12.5px;margin-top:8px}
+  .tablescroll{overflow-x:auto;border:1px solid var(--line);border-radius:14px}
+  table{border-collapse:collapse;width:100%;min-width:1050px;font-size:13.5px}
+  th,td{text-align:left;padding:11px 13px;border-bottom:1px solid var(--line);vertical-align:top}
+  thead th{position:sticky;top:0;background:var(--panel2);color:var(--txt);font-size:12px;text-transform:uppercase;letter-spacing:.06em;z-index:1;cursor:pointer}
+  tbody tr:hover{background:#141a26}
+  td.co{font-weight:700;color:#fff;white-space:nowrap}
+  .tag{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:6px;line-height:1.5}
+  .t-fx{background:rgba(255,106,61,.16);color:#ff9d7d}
+  .t-samp{background:rgba(123,92,255,.18);color:#b3a2ff}
+  .t-hyb{background:rgba(37,208,192,.15);color:#6ee7db}
+  .t-content{background:rgba(245,196,81,.16);color:#f5d98a}
+  .biz{font-size:11px;color:var(--dim)}
+  .core-badge{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.08em;padding:2px 7px;border-radius:5px;background:rgba(255,61,127,.15);color:#ff86b0;margin-left:6px;vertical-align:middle}
+  .sug-badge{background:rgba(37,208,192,.14);color:#5fe0d2}
+  .big-badge{background:rgba(245,196,81,.14);color:#f5d98a}
+  .cards{grid-template-columns:repeat(auto-fill,minmax(340px,1fr))}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:0;overflow:hidden;display:flex;flex-direction:column}
+  .card .top{padding:16px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+  .card h3{margin:0;font-size:17px}
+  .card .yr{color:var(--dim);font-size:12.5px;margin-top:2px}
+  .card .body{padding:14px 18px;font-size:13.5px}
+  .card .row{display:flex;gap:8px;padding:6px 0;border-bottom:1px dashed #202839}
+  .card .row:last-child{border-bottom:0}
+  .card .k{color:var(--dim);width:104px;flex:none;font-size:12px;text-transform:uppercase;letter-spacing:.04em;padding-top:2px}
+  .card .v{color:var(--txt)}
+  .card .v b{color:#fff}
+  .well{background:var(--panel2);border-left:3px solid var(--a4);padding:9px 12px;margin-top:10px;border-radius:0 8px 8px 0;font-size:12.5px;color:var(--mut)}
+  .well b{color:#bfe9e3}
+  .ia-grid{grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}
+  .ia{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:15px 17px}
+  .ia h4{margin:0 0 4px;font-size:15px}
+  .ia .plat{font-size:11px;color:var(--dim);margin-bottom:9px}
+  .ia .navrow{font-size:12.5px;color:var(--mut);margin-bottom:8px}
+  .ia .navrow b{color:var(--txt)}
+  .pill{display:inline-block;background:#182031;border:1px solid var(--line);color:var(--mut);font-size:11.5px;padding:2px 8px;border-radius:6px;margin:2px 3px 2px 0}
+  .pill.win{background:rgba(37,208,192,.12);border-color:#204a46;color:#7fe6d9}
+  .ia .conv{margin-top:8px;font-size:12px;color:var(--dim)}
+  .verdict{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
+  .vcard{border:1px solid var(--line);border-radius:14px;padding:18px;background:var(--panel)}
+  .vcard .h{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+  .score{font-size:12px;font-weight:800;padding:3px 10px;border-radius:999px;letter-spacing:.05em}
+  .s-mid{background:rgba(245,196,81,.18);color:#f5d98a}
+  .s-hi{background:rgba(37,208,192,.16);color:#6ee7db}
+  .vcard h3{margin:0;font-size:16px}
+  .vcard p{margin:6px 0 0;font-size:13.5px;color:var(--mut)}
+  .recs{counter-reset:r;display:grid;gap:12px}
+  .rec{display:flex;gap:14px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:15px 17px}
+  .rec .n{counter-increment:r;flex:none;width:30px;height:30px;border-radius:8px;background:var(--grad);color:#0b0e14;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:15px}
+  .rec .n:before{content:counter(r)}
+  .rec h4{margin:0 0 3px;font-size:15px}
+  .rec p{margin:0;font-size:13.5px;color:var(--mut)}
+  .rec .why{display:inline-block;margin-top:6px;font-size:12px;color:var(--a4)}
+  .prio{font-size:10px;font-weight:800;letter-spacing:.08em;padding:2px 7px;border-radius:5px;margin-left:8px;vertical-align:middle}
+  .p-now{background:rgba(255,61,127,.16);color:#ff86b0}
+  .p-next{background:rgba(245,196,81,.16);color:#f5d98a}
+  .p-later{background:rgba(123,92,255,.16);color:#b3a2ff}
+  .callout{background:linear-gradient(135deg,#141a2b,#12161f);border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:20px}
+  .callout h3{margin:0 0 8px;font-size:17px}
+  .callout p{margin:0 0 8px;color:var(--mut);font-size:14px}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .miss{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px}
+  .miss h4{margin:0 0 8px;font-size:14px;text-transform:uppercase;letter-spacing:.06em;color:var(--dim)}
+  .miss ul{margin:0;padding-left:18px}
+  .miss li{margin-bottom:6px;font-size:13.5px;color:var(--mut)}
+  .miss.good h4{color:#6ee7db}
+  .miss.gap h4{color:#ff9d7d}
+  hr.soft{border:0;border-top:1px solid var(--line);margin:26px 0}
+  footer{border-top:1px solid var(--line);padding:26px 0 60px;color:var(--dim);font-size:12.5px}
+  .srclist{columns:2;column-gap:26px;font-size:12px;margin-top:8px}
+  .srclist a{color:var(--dim)}
+  @media(max-width:720px){.verdict,.two{grid-template-columns:1fr}.card .k{width:92px}h1{font-size:27px}.srclist{columns:1}}
+  .hide{display:none!important}
+  /* ---- Revenue planner (scoped under #revenue to avoid class collisions) ---- */
+  :root{--ok:#25d0c0;--warn:#f5c451;--bad:#ff5d6c}
+  #revenue .layout{display:grid;grid-template-columns:370px 1fr;gap:22px;margin-top:8px}
+  #revenue .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;display:block;overflow:visible}
+  #revenue .card h2{font-size:15px;margin:0 0 14px;text-transform:uppercase;letter-spacing:.08em;color:var(--mut)}
+  #revenue .presets{display:flex;gap:7px;margin-bottom:16px}
+  #revenue .presets button{flex:1;background:var(--panel2);border:1px solid var(--line);color:var(--mut);border-radius:9px;padding:9px 6px;font-size:12.5px;font-weight:700;cursor:pointer}
+  #revenue .presets button:hover{color:#fff}
+  #revenue .presets button.on{background:var(--grad);color:#0b0e14;border-color:transparent}
+  #revenue .field{margin-bottom:15px}
+  #revenue .field label{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;color:var(--mut);margin-bottom:6px}
+  #revenue .field label b{color:#fff;font-size:14px;font-variant-numeric:tabular-nums}
+  #revenue .field input[type=range]{width:100%;accent-color:var(--a2);height:4px}
+  #revenue .field .hint{font-size:11px;color:var(--dim);margin-top:4px}
+  #revenue .grp{border-top:1px solid var(--line);margin:16px 0 14px;padding-top:14px}
+  #revenue .grp:first-child{border-top:0;margin-top:0;padding-top:0}
+  #revenue .grp .gt{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--dim);margin-bottom:12px}
+  #revenue .goalbox{background:linear-gradient(135deg,#161a2c,#12161f);border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:18px}
+  #revenue .goalhead{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:10px;margin-bottom:14px}
+  #revenue .goalhead .big{font-size:34px;font-weight:800;line-height:1;font-variant-numeric:tabular-nums}
+  #revenue .goalhead .lbl{font-size:12px;color:var(--dim);text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px}
+  #revenue .status{font-size:13px;font-weight:800;padding:5px 12px;border-radius:999px}
+  #revenue .st-ok{background:rgba(37,208,192,.16);color:var(--ok)}
+  #revenue .st-warn{background:rgba(245,196,81,.16);color:var(--warn)}
+  #revenue .st-bad{background:rgba(255,93,108,.16);color:var(--bad)}
+  #revenue .bar{display:block;height:14px;width:auto;background:#0e131d;border:1px solid var(--line);border-radius:999px;overflow:hidden;position:relative;vertical-align:baseline;margin:0}
+  #revenue .bar .fill{height:100%;background:var(--grad);border-radius:999px;transition:width .25s}
+  #revenue .bar .goalmark{position:absolute;top:-4px;bottom:-4px;width:2px;background:#fff;opacity:.7}
+  #revenue .barnote{display:flex;justify-content:space-between;font-size:11.5px;color:var(--dim);margin-top:7px}
+  #revenue .kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:18px}
+  #revenue .kpi{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 15px}
+  #revenue .kpi .l{font-size:11.5px;color:var(--dim);text-transform:uppercase;letter-spacing:.06em}
+  #revenue .kpi .v{font-size:23px;font-weight:800;margin-top:4px;font-variant-numeric:tabular-nums}
+  #revenue .kpi .s{font-size:11.5px;color:var(--mut);margin-top:2px}
+  #revenue .chartcard{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 16px 8px;margin-bottom:18px}
+  #revenue .chartcard h3{font-size:14px;margin:0 0 4px;color:var(--mut);text-transform:uppercase;letter-spacing:.06em}
+  #revenue .ch{height:260px;position:relative}
+  #revenue .reverse{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px}
+  #revenue .reverse h3{font-size:14px;margin:0 0 12px;color:var(--mut);text-transform:uppercase;letter-spacing:.06em}
+  #revenue .req{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  #revenue .req .box{background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:13px}
+  #revenue .req .box .l{font-size:11.5px;color:var(--dim)}
+  #revenue .req .box .v{font-size:20px;font-weight:800;margin-top:4px;color:var(--a4);font-variant-numeric:tabular-nums}
+  #revenue .req .box .s{font-size:11px;color:var(--mut);margin-top:3px}
+  #revenue .callout{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--a5);border-radius:0 12px 12px 0;padding:14px 16px;margin-top:18px;margin-bottom:0;font-size:13.5px;color:var(--mut)}
+  #revenue .callout b{color:#f5d98a}
+  #revenue .toggle{display:flex;gap:8px;align-items:center;font-size:12.5px;color:var(--mut);margin-top:10px}
+  #revenue .toggle input{accent-color:var(--a2)}
+  @media(max-width:900px){#revenue .layout{grid-template-columns:1fr}#revenue .req{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="kick">Competitive Analysis · Audio Plugin Market · July 2026</div>
+    <h1>Where <span>Prism Audio Labs</span> fits in the plugin landscape</h1>
+    <p class="sub">A side-by-side look at 18 companies — the six you named, six suggested boutique comparators, and six industry majors (Native Instruments, Waves, Soundtoys, EastWest, Spectrasonics, Universal Audio) — covering scale, catalog, business model, product focus, ecosystem design, and site information architecture, with a strategy read for your redesign and fastest path to revenue.</p>
+    <div class="meta">Figures for team size and revenue are best-estimate (companies rarely disclose these); founding years and catalog counts cross-checked against company sites and registries. Confidence noted where relevant.</div>
+  </div>
+</header>
+
+<nav class="tabs">
+  <div class="wrap">
+    <button data-t="overview" class="active">Landscape map</button>
+    <button data-t="matrix">Comparison matrix</button>
+    <button data-t="profiles">Company profiles</button>
+    <button data-t="ia">Site architecture</button>
+    <button data-t="names">Plugin names</button>
+    <button data-t="revenue">Revenue planner</button>
+    <button data-t="strategy">Strategy for Prism</button>
+    <button data-t="sources">Sources</button>
+  </div>
+</nav>
+
+<div class="wrap">
+
+<section id="overview">
+  <h2><span class="bar"></span>The landscape at a glance</h2>
+  <p class="lead">Each bubble is a company. Horizontal = when they launched; vertical = how many products they sell; bubble size ≈ team size; color = what they primarily sell. The pattern to notice: the market splits into <b>effects/processing</b> shops and <b>instrument/sample</b> houses, and almost nobody sits where Prism is aiming — a physically-modeled <b>world-instrument</b> catalog with a cross-plugin ecosystem.</p>
+  <div class="chartbox">
+    <div class="chart-h"><canvas id="bubble"></canvas></div>
+    <div class="legend">
+      <span><i style="background:#ff6a3d"></i>Effects / processing plugins</span>
+      <span><i style="background:#7b5cff"></i>Sample libraries / instruments</span>
+      <span><i style="background:#25d0c0"></i>Hybrid (plugins + instruments/subscription)</span>
+      <span><i style="background:#f5c451"></i>Sample packs / presets / content</span>
+      <span style="color:var(--dim)">◯ bubble size ≈ team size</span>
+    </div>
+    <div class="note">Prism (dashed ring) is plotted at its <i>planned</i> catalog scale — a useful reality check: launching near the top-right (huge catalog) as a two-person, pre-revenue team is the central tension this analysis keeps returning to.</div>
+  </div>
+</section>
+
+<section id="matrix" class="hide">
+  <h2><span class="bar"></span>Comparison matrix</h2>
+  <p class="lead">Filter by what a company primarily sells, then sort by clicking a column header. "Works together" = are products designed to interoperate (shared engine, bundles, cross-compatibility) or sold as standalone one-offs?</p>
+  <div class="filters" id="mfilters">
+    <span class="lbl">Show</span>
+    <span class="chip on" data-f="all">All</span>
+    <span class="chip" data-f="fx">Effects</span>
+    <span class="chip" data-f="samp">Instruments</span>
+    <span class="chip" data-f="hyb">Hybrid</span>
+    <span class="chip" data-f="content">Content</span>
+    <span class="lbl" style="margin-left:10px">Group</span>
+    <span class="chip" data-f="core">Your 6</span>
+    <span class="chip" data-f="sug">Suggested</span>
+    <span class="chip" data-f="big">The majors</span>
+  </div>
+  <div class="tablescroll">
+    <table id="mtable">
+      <thead><tr>
+        <th data-s="name">Company</th>
+        <th data-s="founded">Founded</th>
+        <th data-s="team">Team*</th>
+        <th data-s="products"># Products</th>
+        <th data-s="core">Core offering</th>
+        <th data-s="focus">Instrument / sound focus</th>
+        <th data-s="eco">Works together?</th>
+        <th data-s="price">Pricing</th>
+        <th data-s="scale">Scale / traction</th>
+      </tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <div class="note">*Team size is an estimate from About pages, LinkedIn/Tracxn/Crunchbase and small-company signals — treat as order-of-magnitude. Revenue is disclosed by none of these companies; "scale" reflects awards, endorsements, press and self-reported user counts.</div>
+</section>
+
+<section id="profiles" class="hide">
+  <h2><span class="bar"></span>Company profiles</h2>
+  <p class="lead">The six you named, five suggested boutique comparators, then the six industry majors. Each "what to learn from them" note is the transferable lesson for Prism.</p>
+  <div class="grid cards" id="cardgrid"></div>
+</section>
+
+<section id="ia" class="hide">
+  <h2><span class="bar"></span>Site information architecture</h2>
+  <p class="lead">What core pages each competitor runs and the conversion features they lean on. Green pills = features worth stealing. The consistent winners across every strong site: <b>inline audio demos on every product</b>, a <b>free plugin / free tier</b> as top-of-funnel, and <b>bundles</b> to raise order value.</p>
+  <div class="grid ia-grid" id="iagrid"></div>
+  <hr class="soft">
+  <div class="callout">
+    <h3>Your current site (prismaudiolabs.co) — what's there vs. what's missing</h3>
+    <p>A polished Next.js pre-launch site: strong brand system ("Analog Soul. Digital Precision."), 79 plugins across 14 collections, a genuinely differentiated tech story (physical modeling, no Kontakt, small file sizes), a real ecosystem hook (Prism Link / Fuse), and an unusually transparent pricing page with a competitor comparison. Everything is marked "Coming 2026."</p>
+    <div class="two">
+      <div class="miss good"><h4>Real strengths</h4><ul>
+        <li>Cohesive visual identity and naming system — already better than most boutiques.</li>
+        <li>Differentiated technology narrative few competitors can claim.</li>
+        <li>Best-in-class pricing transparency + value framing vs. Kontakt/EastWest/8Dio.</li>
+        <li>Prism Link is a real ecosystem story — most rivals only <i>bundle</i>, they don't <i>interconnect</i>.</li>
+      </ul></div>
+      <div class="miss gap"><h4>Redesign must-fixes</h4><ul>
+        <li><b>No audio demos.</b> Fatal for an audio product — every strong competitor leads with "Play demo."</li>
+        <li><b>No proof / no faces.</b> No reviews, press, endorsements, or your founder story (the husband-and-wife team is untold).</li>
+        <li><b>Broken support IA</b> — Docs / FAQ / Install / Contact all currently point to /about.</li>
+        <li><b>No free taster</b> to build an email list before launch (vs. Spitfire LABS, Valhalla free, Goodhertz free).</li>
+        <li><b>Internal inconsistencies</b> (74 vs 79 plugin counts; Seismic/Void appear only on the Link page).</li>
+      </ul></div>
+    </div>
+  </div>
+</section>
+
+<section id="names" class="hide">
+  <h2><span class="bar"></span>Plugin &amp; bundle names — the naming landscape</h2>
+  <p class="lead">A sampling of what each company actually calls its products, tagged by <b>naming vibe</b>. The pattern to notice: the most respected brands on this list cluster at two disciplined poles — <b>functional</b> (the name is the job) and <b>playful</b> (human wordplay) — and almost nobody leans "epic-fantasy." That's the lens for the Prism question below.</p>
+
+  <div class="filters" style="margin-bottom:20px">
+    <span class="lbl">Vibe key</span>
+    <span class="pill" style="background:#25d0c022;border-color:#25d0c0;color:#25d0c0">Functional — name = the job</span>
+    <span class="pill" style="background:#7b5cff22;border-color:#7b5cff;color:#b3a2ff">Evocative / cinematic — mood over specs</span>
+    <span class="pill" style="background:#f5c45122;border-color:#f5c451;color:#f5d98a">Playful / nostalgic — wordplay</span>
+    <span class="pill" style="background:#9aa6bd22;border-color:#9aa6bd;color:#9aa6bd">Descriptive — names what it's for</span>
+    <span class="pill" style="background:#ff3d7f22;border-color:#ff3d7f;color:#ff86b0">Epic-fantasy / elemental</span>
+    <span class="pill" style="background:#ff6a3d22;border-color:#ff6a3d;color:#ff9d7d">Authentic / ethnographic</span>
+  </div>
+
+  <div class="grid cards" id="pnamegrid"></div>
+
+  <hr class="soft">
+
+  <div class="callout">
+    <h3>Prism's names — the split you're sensing is real, and it's fixable surgically</h3>
+    <p>Prism doesn't have one naming style — it has <b>two</b>, and they pull in opposite directions. The World Instrument names are pitch-perfect. The FX/synth names are where the "fantasy-novel / gamer" read comes from. You don't need to rename the catalog — you need to bring the effects line into the same disciplined register the instruments already live in.</p>
+    <div class="two">
+      <div class="miss good"><h4>Authentic &amp; credible — keep exactly as-is</h4><ul>
+        <li><b>World Instruments:</b> Kora, Oud, Duduk, Koto, Sitar, Erhu, Bansuri, Hang Drum, Nyckelharpa, Hurdy Gurdy, Berimbau, Morin Khuur, Uilleann Pipes.</li>
+        <li>Real instrument names = instant authority and searchability. This is the naming a composer <i>trusts</i>. It's also better than most boutiques manage.</li>
+      </ul></div>
+      <div class="miss gap"><h4>Epic-fantasy / elemental — the "cheese" risk</h4><ul>
+        <li><b>FX &amp; synths:</b> Dragonbreath, Void Noise Machine, Magma Hard Synth, Pyre Spring Reverb, Vortex Auto-Wah, Zephyr Flanger, Aether Ring Mod, Stellar Supersaw, Telluric Analog Synth.</li>
+        <li><b>Collections:</b> Warpath, Tengri, Selva, Fuego, Fjord.</li>
+        <li>Reads as hobbyist exactly when an unknown two-person brand needs to read as trustworthy. It also buries <i>what the plugin does</i> under a theme.</li>
+      </ul></div>
+    </div>
+    <div class="well" style="margin-top:14px"><b>The models to steer toward:</b> the two most-admired naming systems here go opposite but equally disciplined directions — <b>Baby Audio</b> (playful-but-human: <i>Spaced Out, Comeback Kid, Smooth Operator</i>) and <b>Valhalla / FabFilter</b> (functional: <i>VintageVerb, Pro-Q</i>). Both make the name serve the product. Note Valhalla proves a <i>mythic</i> wrapper can work — but only as a light prefix on an otherwise plain, descriptive name (<i>Valhalla&nbsp;Room</i>), never as the whole identity. Pick one pole for Prism's FX line and commit; the instruments already show you can be disciplined. One more data point from the majors: the only big company naming in Prism's epic register is <b>EastWest</b> (<i>Voices of the Empire, Ancient Kingdom, RA</i>) — and they back it with an actual Hollywood studio, 38 years of history, and even then anchor their flagships on place-prestige (<i>Hollywood Orchestra</i>), not fantasy.</div>
+  </div>
+
+  <div class="callout" style="border-left:3px solid var(--a4)">
+    <h3>Proposed direction: name the FX line after light, not dragons</h3>
+    <p>Prism already owns a stronger theme than fantasy: <b>light</b>. Refraction, spectrum, optics. It is scientific and sophisticated, it fits "Analog Soul. Digital Precision," and no competitor owns it. Audio effects map onto optical phenomena almost one to one, so the names read as clever rather than decorated, and they still form a collectible family the way Dragonbreath was reaching for. The world instruments (Kora, Oud, Duduk) do not change. This is the FX and synth side only.</p>
+    <div class="tablescroll" style="margin-top:14px">
+      <table style="min-width:760px">
+        <thead><tr>
+          <th>Effect</th><th>Current (epic)</th><th>Proposed (optics)</th><th>The idea</th>
+        </tr></thead>
+        <tbody>
+          <tr><td style="color:var(--mut)">Delay</td><td style="color:#ff9d7d">Solar Echo</td><td class="co">Afterimage</td><td style="color:var(--mut)">A visual echo. The name states the effect.</td></tr>
+          <tr><td style="color:var(--mut)">Ring mod</td><td style="color:#ff9d7d">Aether Ring Mod</td><td class="co">Moiré</td><td style="color:var(--mut)">Ring mod makes interference sidebands; a moiré is an interference pattern.</td></tr>
+          <tr><td style="color:var(--mut)">Auto-wah</td><td style="color:#ff9d7d">Vortex Auto-Wah</td><td class="co">Shutter</td><td style="color:var(--mut)">A shutter opens and closes, like a filter sweeping.</td></tr>
+          <tr><td style="color:var(--mut)">Chorus</td><td style="color:#ff9d7d">Analog Chorus</td><td class="co">Tint</td><td style="color:var(--mut)">A subtle shift of color, for a widened, doubled sound.</td></tr>
+          <tr><td style="color:var(--mut)">Tremolo</td><td style="color:#ff9d7d">Analog Tremolo</td><td class="co">Strobe</td><td style="color:var(--mut)">Pulsing light for pulsing volume.</td></tr>
+          <tr><td style="color:var(--mut)">Flanger</td><td style="color:#ff9d7d">Zephyr Flanger</td><td class="co">Fresnel</td><td style="color:var(--mut)">A Fresnel lens bends light in rings, like a flanger's sweep.</td></tr>
+          <tr><td style="color:var(--mut)">Distortion</td><td style="color:#ff9d7d">Terra Distortion</td><td class="co">Glare</td><td style="color:var(--mut)">The harsh, blown-out light of a distorted signal.</td></tr>
+          <tr><td style="color:var(--mut)">Supersaw</td><td style="color:#ff9d7d">Stellar Supersaw</td><td class="co">Diffraction</td><td style="color:var(--mut)">A diffraction grating fans light into a spectrum, like stacked detuned saws.</td></tr>
+          <tr><td style="color:var(--mut)">Hard synth</td><td style="color:#ff9d7d">Magma Hard Synth</td><td class="co">Glint</td><td style="color:var(--mut)">A hard, bright flash of light.</td></tr>
+          <tr><td style="color:var(--mut)">Analog synth</td><td style="color:#ff9d7d">Telluric Analog Synth</td><td class="co">Tungsten</td><td style="color:var(--mut)">A tungsten filament glows warm. Analog warmth in a word.</td></tr>
+          <tr><td style="color:var(--mut)">Multi-FX</td><td style="color:#ff9d7d">Nebula MFX</td><td class="co">Prism Rack</td><td style="color:var(--mut)">The hub that refracts one signal through many effects.</td></tr>
+          <tr><td style="color:var(--mut)">Noise</td><td style="color:#ff9d7d">Void Noise Machine</td><td class="co">Static</td><td style="color:var(--mut)">Plain, honest, evocative.</td></tr>
+          <tr><td style="color:var(--mut)">Texture instr.</td><td style="color:#ff9d7d">Void (Link)</td><td class="co">Penumbra</td><td style="color:var(--mut)">The soft outer shadow. A dark, percussion-reactive texture.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="well" style="margin-top:14px"><b>On the box, follow Valhalla's formula:</b> house name, then evocative word, then a plain job title, so a cold visitor always knows what it does. <i>Prism Moiré · Ring Modulator</i>. <i>Prism Fresnel · Flanger</i>. <i>Prism Diffraction · Supersaw</i>.</div>
+
+    <div class="two" style="margin-top:16px">
+      <div class="miss good"><h4>Two backup directions</h4><ul>
+        <li><b>Functional (the FabFilter route):</b> let the job be the name. <i>Prism Delay, Prism Wah, Prism Drive, Prism Synth One</i>. Boring on purpose. Best fit for the pedal line, where the names are already functional; there the only fix is the umbrella (retire <b>Dragonbreath</b>, call it the <b>Circuit Series</b> or just <b>Prism Pedals</b>).</li>
+        <li><b>Playful-human (hold for later):</b> Baby Audio's register works for beatmakers but sits oddly next to Kora on a composer page. Keep it in the drawer for a future free or budget line.</li>
+      </ul></div>
+      <div class="miss gap"><h4>Rename regardless of theme (legal + culture)</h4><ul>
+        <li><b>Warpath</b> is the catalog's riskiest name: a war theme over Indigenous and ceremonial instruments invites exactly the cultural criticism to avoid. Use <b>Ceremony</b> or <b>Rites</b> (the bundle copy already says "War Horns &amp; Ceremony").</li>
+        <li><b>Astral Rhodes</b> and <b>Ether Wurlitzer</b> use live, defended trademarks. Convention: <b>Tine EP</b> (Rhodes uses tines) and <b>Reed EP</b> (Wurlitzers use reeds). <b>Comet Juno</b> should become something like <b>Poly 8</b>.</li>
+        <li>Culturally rooted collection names (<i>Griot, Raga, Ceol, Tengri</i>) are fine. Keep them.</li>
+      </ul></div>
+    </div>
+
+    <div id="clearance-note" style="margin-top:16px">
+      <h4 style="margin:0 0 8px;font-size:14px;text-transform:uppercase;letter-spacing:.06em;color:var(--dim)">Trademark clearance (audio-space product check: KVR + web)</h4>
+      <p style="color:var(--mut);margin:0 0 12px;font-size:13.5px">Five names collide with existing audio products and should change. The rest are usable, some with a minor note. This checks product presence in the plugin market, not the formal trademark registers, so run a USPTO / EUIPO search on the finalists before committing.</p>
+      <div class="tablescroll">
+        <table style="min-width:820px">
+          <thead><tr><th>Proposed</th><th>Verdict</th><th>Collision in the audio space</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td class="co">Afterimage</td><td style="color:#6ee7db;font-weight:700">CLEAR</td><td style="color:var(--mut)">None found</td><td style="color:#6ee7db">Keep</td></tr>
+            <tr><td class="co">Moiré</td><td style="color:#6ee7db;font-weight:700">CLEAR</td><td style="color:var(--mut)">None found</td><td style="color:#6ee7db">Keep</td></tr>
+            <tr><td class="co">Iris</td><td style="color:#f5d98a;font-weight:700">CAUTION</td><td style="color:var(--mut)">iZotope Iris (a synth, discontinued but famous)</td><td style="color:var(--mut)">Keep, different effect type</td></tr>
+            <tr><td class="co">Strobe</td><td style="color:#f5d98a;font-weight:700">CAUTION</td><td style="color:var(--mut)">Strobe2 (FXpansion synth)</td><td style="color:var(--mut)">Keep, different effect type</td></tr>
+            <tr><td class="co">Flare</td><td style="color:#f5d98a;font-weight:700">CAUTION</td><td style="color:var(--mut)">Puremagnetik Flare, Sinevibes Flare (NI's is "Flair")</td><td style="color:var(--mut)">Usable, minor overlap</td></tr>
+            <tr><td class="co">Arc</td><td style="color:#f5d98a;font-weight:700">CAUTION</td><td style="color:var(--mut)">IK ARC (room correction), ArcSyn (synth)</td><td style="color:var(--mut)">Usable, watch ArcSyn</td></tr>
+            <tr><td class="co">Static</td><td style="color:#f5d98a;font-weight:700">CAUTION</td><td style="color:var(--mut)">Generic term, no prominent product</td><td style="color:var(--mut)">Low risk, keep</td></tr>
+            <tr><td class="co">Chroma</td><td style="color:var(--bad);font-weight:700">AVOID</td><td style="color:var(--mut)">Hologram Chroma Console (FX pedal); ARP/Rhodes Chroma synth</td><td style="color:#6ee7db">Swap → Tint (usable)</td></tr>
+            <tr><td class="co">Doppler</td><td style="color:var(--bad);font-weight:700">AVOID</td><td style="color:var(--mut)">Waves Doppler; Sound Particles Doppler</td><td style="color:#6ee7db">Swap → Fresnel ✓ clear</td></tr>
+            <tr><td class="co">Spectra</td><td style="color:var(--bad);font-weight:700">AVOID</td><td style="color:var(--mut)">Audiomodern Spectra, Waverator Spectra; Spectrasonics</td><td style="color:#6ee7db">Swap → Diffraction ✓ clear</td></tr>
+            <tr><td class="co">Umbra</td><td style="color:var(--bad);font-weight:700">AVOID</td><td style="color:var(--mut)">Orchestral Tools Umbra (percussion library, your exact lane)</td><td style="color:#6ee7db">Swap → Penumbra</td></tr>
+            <tr><td class="co">Kaleido</td><td style="color:var(--bad);font-weight:700">AVOID</td><td style="color:var(--mut)">Waves Kaleidoscopes; 2CAudio Kaleidoscope</td><td style="color:#6ee7db">Swap → Prism Rack</td></tr>
+            <tr><td class="co">Filament</td><td style="color:var(--bad);font-weight:700">AVOID</td><td style="color:var(--mut)">Forma Labs Filament (2026 instrument plugin, same category)</td><td style="color:#6ee7db">Swap → Tungsten</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="well" style="margin-top:12px"><b>Electric pianos, too:</b> "Reed EP" collides with Sampleson's Reed106 / Reed200, and "Tine EP" is too generic to protect. Use model-number naming instead: <b>Prism EP-73</b> (the tine piano) and <b>Prism EP-200</b> (the reed piano). This also clears the Rhodes and Wurlitzer trademarks in one move.</div>
+      <div class="well" style="margin-top:12px;border-left-color:var(--a3)"><b>Where this nets out.</b> Single-word plugin names are effectively exhausted. Across three rounds, only a handful of bare words came back clean: <b>Afterimage, Moiré, Fresnel, Diffraction</b>, with <b>Tint</b> clear by a hair. So the recommendation for the whole line is the <b>house-prefix format</b>: <i>Prism Afterimage, Prism Fresnel, Prism Diffraction, Prism Moiré</i>. The brand carries the trademark, the descriptive word rides along, and a bare-word overlap stops mattering (the way <i>Valhalla Room</i> coexists with every other "Room"). That covers the plugin market. The trademark-register check (US / EU / UK) is below: it clears most of these names but flags the brand and three of them.</div>
+    </div>
+  </div>
+
+  <div class="callout" style="border-left:3px solid var(--bad)">
+    <h3>Trademark register check (US / EU / UK)</h3>
+    <p>A search of the public registers (USPTO via TSDR, EU and UK via EUIPO's TMview aggregator), focused on Class 9 (software) and Class 15 (musical instruments). This is a factual read of what is registered, not legal advice, and it does not replace a trademark attorney. Class 9 is enormous, so nearly every real word has some registration in it. What matters is whether a collision sits in <i>your</i> goods (audio and music software) or an unrelated lane.</p>
+
+    <div class="well" style="border-left-color:#ff3d7f;background:var(--panel2)"><b>Headline: the real exposure is the word "Prism," not the product names.</b> "Prism Audio Labs" as a full name is unregistered everywhere. But the distinctive element, "Prism," is contested in audio Class 9 by established owners: <b>Prism Sound</b> (US "PRISMSOUND", Reg 2195242, professional audio equipment) and <b>Headstock Distribution</b> (UK "PRISM", filed Nov 2025, covering mixers, amps, mics, loudspeakers), plus a live EU "Prism High Definition Sound," and unregistered plugin uses (Tokyo Dawn's TDR Prism, IK's Prism Reverb, a Jackson Audio Prism pedal). Audio hardware and audio software are related goods in one class, and "Audio Labs" is descriptive, so this is a genuine potential obstacle for the brand, and every "Prism [Word]" product inherits it. Put this in front of a trademark attorney before investing further in the name.</div>
+
+    <div class="tablescroll" style="margin-top:14px">
+      <table style="min-width:840px">
+        <thead><tr><th>Name</th><th>Register finding (audio classes)</th><th>Verdict</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr><td class="co">Iris</td><td style="color:var(--mut)">iZotope Iris: live US Class 9 for audio and music-creation software (Native Instruments, Reg 4199919). Your exact goods.</td><td style="color:var(--bad);font-weight:700">CONFLICT</td><td style="color:#6ee7db">Swap → Shutter ✓ clear</td></tr>
+          <tr><td class="co">Flare</td><td style="color:var(--mut)">Flare Audio (UK): live US Class 9 for audio hardware, and actively policed (a plugin maker renamed a product over it).</td><td style="color:#f5d98a;font-weight:700">POTENTIAL</td><td style="color:#6ee7db">Swap → Glare ✓ clear</td></tr>
+          <tr><td class="co">Arc</td><td style="color:var(--mut)">IK Multimedia asserts an ARC-family ® for room-correction software (Class 9).</td><td style="color:#f5d98a;font-weight:700">POTENTIAL</td><td style="color:#6ee7db">Swap → Glint ✓ clear</td></tr>
+          <tr><td class="co">Penumbra</td><td style="color:var(--mut)">Adobe holds the identical word, live US Class 9, for font software (different goods). No audio use found.</td><td style="color:#f5d98a;font-weight:700">POTENTIAL</td><td style="color:var(--mut)">Usable under the prefix, note it</td></tr>
+          <tr><td class="co">Tungsten</td><td style="color:var(--mut)">Live Class 9 marks in fintech and fonts (different lane). Green Oak's audio effect "Tungsten" is unregistered.</td><td style="color:#f5d98a;font-weight:700">POTENTIAL</td><td style="color:var(--mut)">Usable under the prefix, note it</td></tr>
+          <tr><td class="co">Afterimage</td><td style="color:var(--mut)">US clear (every audio mark is dead). EU and UK: Aurogon (a game studio) holds the word live in Class 9.</td><td style="color:#f5d98a;font-weight:700">POTENTIAL (EU)</td><td style="color:var(--mut)">Usable, watch Europe</td></tr>
+          <tr><td class="co">Moiré</td><td style="color:var(--mut)">Only live exact-word mark is power outlets. Nothing in audio.</td><td style="color:#6ee7db;font-weight:700">CLEAR</td><td style="color:#6ee7db">Keep</td></tr>
+          <tr><td class="co">Fresnel</td><td style="color:var(--mut)">One live Class 9 mark is construction ERP software. Nothing in audio.</td><td style="color:#6ee7db;font-weight:700">CLEAR</td><td style="color:#6ee7db">Keep</td></tr>
+          <tr><td class="co">Diffraction</td><td style="color:var(--mut)">Exact word is dead (eyewear); the rest are X-ray instruments. Nothing in audio.</td><td style="color:#6ee7db;font-weight:700">CLEAR</td><td style="color:#6ee7db">Keep</td></tr>
+          <tr><td class="co">Tint</td><td style="color:var(--mut)">US audio marks all dead; one live EU "tint" is a smart-lighting brand (different goods).</td><td style="color:#6ee7db;font-weight:700">CLEAR</td><td style="color:#6ee7db">Keep</td></tr>
+          <tr><td class="co">Strobe</td><td style="color:var(--mut)">No live audio word mark found (mirrors partly blocked, so confirm).</td><td style="color:#6ee7db;font-weight:700">CLEAR*</td><td style="color:#6ee7db">Keep</td></tr>
+          <tr><td class="co">Static</td><td style="color:var(--mut)">No live audio word mark found (search-limited).</td><td style="color:#6ee7db;font-weight:700">CLEAR*</td><td style="color:#6ee7db">Keep</td></tr>
+          <tr><td class="co">Rites</td><td style="color:var(--mut)">No Class 9 or 15 standalone word mark. Cleaner than Ceremony, which Les Mills holds in Class 9 for fitness recordings.</td><td style="color:#6ee7db;font-weight:700">CLEAR</td><td style="color:#6ee7db">Use for the collection</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note" style="margin-top:10px">Access note: Justia and Trademarkia blocked scripted fetch (HTTP 403) and the new USPTO search is JS-only, so US records were read via TSDR and the Justia mirror, and EU / UK via TMview. Names marked CLEAR* were clear on the reachable evidence, not an exhaustive sweep. Glare, Glint, and Shutter all cleared both the plugin market and the registers (Shutter is clean in audio; the word is common in camera goods, a separate channel). Aperture was ruled out, a live Moonwave FX filter plugin already uses it. None of this is legal advice; a trademark attorney should run a formal clearance on the finalists and the brand before launch.</p>
+  </div>
+</section>
+
+<section id="revenue" class="hide">
+  <h2><span class="bar"></span>Revenue planner — what it takes to hit $250K</h2>
+  <p class="lead">A transparent traffic × conversion × order-value model. Drag any slider or pick a scenario; the goal bar, 12-month ramp, and "what you'd need" panel update live. All assumptions are yours to change — the defaults are grounded in boutique-plugin benchmarks, not promises.</p>
+
+  <div class="layout">
+
+    <!-- INPUTS -->
+    <div class="card">
+      <h2>Assumptions</h2>
+      <div class="presets" id="presets">
+        <button data-p="cons">Conservative</button>
+        <button data-p="base" class="on">Base</button>
+        <button data-p="opt">Optimistic</button>
+      </div>
+
+      <div class="grp">
+        <div class="gt">Your goal</div>
+        <div class="field">
+          <label>Annual target <b><span id="targetV">$250,000</span></b></label>
+          <input type="range" id="target" min="100000" max="600000" step="10000" value="250000">
+          <div class="hint">The income you want the business to replace.</div>
+        </div>
+        <div class="toggle">
+          <input type="checkbox" id="takehome" checked>
+          <label for="takehome" style="margin:0;color:var(--mut)">Target is take-home income (grosses up for tax + business costs)</label>
+        </div>
+      </div>
+
+      <div class="grp">
+        <div class="gt">Traffic &amp; conversion</div>
+        <div class="field">
+          <label>Monthly site visitors (month 1) <b><span id="visV">8,000</span></b></label>
+          <input type="range" id="vis" min="500" max="60000" step="500" value="8000">
+          <div class="hint">New boutiques often start 1–10k/mo. Arya's network, PR &amp; a free plugin drive this.</div>
+        </div>
+        <div class="field">
+          <label>Visitor → buyer conversion <b><span id="convV">1.5%</span></b></label>
+          <input type="range" id="conv" min="0.2" max="5" step="0.1" value="1.5">
+          <div class="hint">Typical plugin-site range ≈ 1–3%. Demos &amp; trials push it up.</div>
+        </div>
+      </div>
+
+      <div class="grp">
+        <div class="gt">Order value</div>
+        <div class="field">
+          <label>Avg single-plugin price <b>$<span id="psV">49</span></b></label>
+          <input type="range" id="ps" min="19" max="149" step="1" value="49">
+        </div>
+        <div class="field">
+          <label>Avg plugins per non-bundle order <b><span id="uV">1.6</span></b></label>
+          <input type="range" id="u" min="1" max="4" step="0.1" value="1.6">
+        </div>
+        <div class="field">
+          <label>Share of orders that are bundles <b><span id="bV">12%</span></b></label>
+          <input type="range" id="b" min="0" max="50" step="1" value="12">
+          <div class="hint">Prism Link makes the "buy the collection" bundle your biggest lever.</div>
+        </div>
+        <div class="field">
+          <label>Avg bundle price <b>$<span id="pbV">249</span></b></label>
+          <input type="range" id="pb" min="79" max="599" step="10" value="249">
+        </div>
+      </div>
+
+      <div class="grp">
+        <div class="gt">Growth &amp; leakage</div>
+        <div class="field">
+          <label>Monthly growth in traffic <b><span id="gV">6%</span></b></label>
+          <input type="range" id="g" min="0" max="20" step="1" value="6">
+          <div class="hint">Compounds month-over-month across year 1.</div>
+        </div>
+        <div class="field">
+          <label>Refund rate <b><span id="refV">5%</span></b></label>
+          <input type="range" id="ref" min="0" max="15" step="1" value="5">
+        </div>
+        <div class="field">
+          <label>Payment + platform fees <b><span id="feeV">8%</span></b></label>
+          <input type="range" id="fee" min="3" max="20" step="1" value="8">
+          <div class="hint">Card fees, distributor cuts (e.g. Plugin Boutique ~30% if used), tax processing.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RESULTS -->
+    <div>
+      <div class="goalbox">
+        <div class="goalhead">
+          <div>
+            <div class="lbl">Projected Year-1 net revenue</div>
+            <div class="big" id="annualNet">$—</div>
+          </div>
+          <div style="text-align:right">
+            <div class="lbl">vs. goal</div>
+            <div class="status" id="status">—</div>
+          </div>
+        </div>
+        <div class="bar"><div class="fill" id="fill" style="width:0%"></div><div class="goalmark" id="goalmark" style="left:100%"></div></div>
+        <div class="barnote"><span id="pctText">—</span><span>Goal: <span id="goalGross">$250,000</span></span></div>
+      </div>
+
+      <div class="kpis">
+        <div class="kpi"><div class="l">Month-1 net revenue</div><div class="v" id="m1net">$—</div><div class="s" id="m1orders">— orders / month</div></div>
+        <div class="kpi"><div class="l">Month-12 run-rate</div><div class="v" id="runrate">$—</div><div class="s">annualized exit velocity</div></div>
+        <div class="kpi"><div class="l">Avg order value</div><div class="v" id="aov">$—</div><div class="s">blended single + bundle</div></div>
+        <div class="kpi"><div class="l">Orders needed in year 1</div><div class="v" id="orders12">—</div><div class="s">total paid orders</div></div>
+      </div>
+
+      <div class="chartcard">
+        <h3>12-month revenue ramp (net)</h3>
+        <div class="ch"><canvas id="ramp"></canvas></div>
+      </div>
+
+      <div class="reverse">
+        <h3>To actually hit your goal, you'd need…</h3>
+        <div class="req">
+          <div class="box"><div class="l">Monthly visitors (month 1)</div><div class="v" id="reqVis">—</div><div class="s">at current <span id="reqConv">1.5%</span> conversion</div></div>
+          <div class="box"><div class="l">…or conversion rate</div><div class="v" id="reqConvRate">—</div><div class="s">at current <span id="reqVisNow">8,000</span> visitors</div></div>
+          <div class="box"><div class="l">…or paid orders / month (avg)</div><div class="v" id="reqOrders">—</div><div class="s">across year 1 at current AOV</div></div>
+        </div>
+        <div class="callout" id="income-callout"></div>
+      </div>
+    </div>
+
+  </div>
+  <div class="note" style="margin-top:14px">Illustrative planning model — not a forecast. Outputs are only as good as the assumptions; every input is editable. Benchmarks reflect typical boutique audio-plugin ranges, not guarantees.</div>
+</section>
+
+<section id="strategy" class="hide">
+  <h2><span class="bar"></span>Strategy read for Prism</h2>
+  <p class="lead">You asked directly: does "our plugins work together + we're building world instruments" put you ahead — or should you think differently, given the goal is revenue as fast as possible? Here's the honest read, then a sequenced plan that plays to your two-person team (a career audio engineer/producer-turned-sales-exec + a web/comms/marketing lead — genuinely well-matched to go-to-market).</p>
+
+  <div class="verdict">
+    <div class="vcard">
+      <div class="h"><span class="score s-mid">Edge: MODERATE</span><h3>“Our plugins work together”</h3></div>
+      <p>Interoperability is real and likable, but it's a <b>retention / lifetime-value lever, not an acquisition hook</b>. It rewards people who already own several of your plugins — it rarely drives the <i>first</i> purchase, which is what fast revenue needs. Heavyocity (shared engine), FabFilter (unified UX), and Baby Audio (a subscription that unifies its catalog) all have "works together" stories, so the <i>claim</i> isn't ownable on its own. Prism Link is more technically ambitious than their bundling — so keep it, but frame it as the reason to <b>buy the bundle / come back</b>, not the headline that wins a cold visitor.</p>
+    </div>
+    <div class="vcard">
+      <div class="h"><span class="score s-hi">Edge: STRONG (but niche)</span><h3>“We make world instruments”</h3></div>
+      <p>This is your real wedge. Physically-modeled world instruments — kora, oud, koto, duduk, hurdy-gurdy — with no Kontakt dependency and tiny file sizes is a position <b>almost nobody owns at breadth</b>. It's defensible and memorable. Two caveats: the world-instrument market is <b>smaller</b> than mixing FX, and cultural authenticity is a credibility (and PR) risk. De-risk it by collaborating with and <b>crediting real players/experts</b> — which doubles as your best marketing.</p>
+    </div>
+  </div>
+
+  <div class="callout">
+    <h3>What the majors change (and don't)</h3>
+    <p>Adding Native Instruments, Waves, Soundtoys, EastWest, Spectrasonics and Universal Audio clarifies the map rather than crowding it. The majors compete on <b>catalog breadth, licensed authority, ecosystem lock-in, and discount treadmills</b> — and each strength opens a gap a boutique can take: their perma-sales and subscription pushes have burned ownership trust (Waves' forced-subscription attempt collapsed in 3 days; NI hit insolvency in Jan 2026 and was sold to inMusic), their per-product character is shallow, and their "weirdness budget" is near zero. Three specifics for Prism: <b>EastWest's RA/Silk are the incumbent world-instrument products</b> — heavyweight sample banks in a proprietary player, so Prism's counter is modeled playability, tiny footprints and real-player provenance, not breadth. <b>Spectrasonics is the blueprint</b> — a husband-and-wife shop, four never-discounted products, satellites that plug into a flagship engine (what Prism Link should become). And <b>Soundtoys proves the scale works</b> — ~16 people, 23 opinionated effects, near-default status.</p>
+  </div>
+
+  <div class="callout">
+    <h3>The bigger issue than either advantage: focus</h3>
+    <p>The single biggest threat to "revenue fast" isn't your competitors — it's <b>launching 79 plugins from a two-person, unproven team</b>. It reads as thin, invites skepticism, and spreads your demos, support, and marketing impossibly thin. Every company on this list that grew fast started <b>narrow</b>: Valhalla owned "reverb," FabFilter owned "the EQ," Baby Audio owned "a vibe," Vynl launched with <b>two</b> plugins and a viral tone. Breadth is a moat you earn <i>after</i> revenue, not the thing that generates it.</p>
+  </div>
+
+  <h3 style="margin:0 0 4px;font-size:17px">Sequenced plan for fastest revenue</h3>
+  <p class="lead" style="margin-bottom:16px">Ordered. Priority tags: <span class="prio p-now">DO NOW</span> pre/at launch · <span class="prio p-next">NEXT</span> first 90 days · <span class="prio p-later">LATER</span> once revenue is flowing.</p>
+  <div class="recs">
+    <div class="rec"><div class="n"></div><div>
+      <h4>Launch ONE hero collection, not the whole universe <span class="prio p-now">DO NOW</span></h4>
+      <p>Pick your single most differentiated, most demo-able collection — most likely a flagship world-instrument set (that's your ownable story) or the Dragonbreath FX line (easier for producers to "get"). Ship it superbly with 6–10 killer audio demos. Keep the other 70 plugins as a visible "roadmap" that builds anticipation and an email list.</p>
+      <span class="why">Focus is the highest-leverage move on this page. It fixes credibility, demos, and support load at once.</span>
+    </div></div>
+    <div class="rec"><div class="n"></div><div>
+      <h4>Lead with sound — audio/video demos everywhere <span class="prio p-now">DO NOW</span></h4>
+      <p>Nothing sells an audio plugin like audio. Inline "Play demo" on every product (like Spitfire, Teletone, Heavyocity, Westwood), plus 1–2 short "in-context" videos of the instruments in a real track. This is the #1 gap on your current site and the #1 conversion driver on every strong competitor.</p>
+      <span class="why">Your husband can produce reference tracks that show the instruments off — a rare in-house advantage.</span>
+    </div></div>
+    <div class="rec"><div class="n"></div><div>
+      <h4>Give away one free "taster" plugin <span class="prio p-now">DO NOW</span></h4>
+      <p>Valhalla's Supermassive, Spitfire LABS, and Goodhertz freebies are acquisition engines: they build email lists, word-of-mouth and trust at near-zero cost. Release one free world instrument or a lite FX unit as your top-of-funnel and gate future launches behind that list.</p>
+      <span class="why">Fastest, cheapest way to build the audience you'll sell the paid launch to.</span>
+    </div></div>
+    <div class="rec"><div class="n"></div><div>
+      <h4>Weaponize your founders' story and network <span class="prio p-now">DO NOW</span></h4>
+      <p>Two assets most boutiques lack: a career <b>audio engineer/producer turned tech-sales exec</b>, and a <b>marketing/comms</b> lead. Put your faces and story on the site (trust!), and have him do outbound the way sales execs do — line up artist/composer endorsements, sync/library/game-audio relationships, and education deals before launch. Have her run the launch calendar, PR, and content.</p>
+      <span class="why">This team is unusually good at go-to-market. Most competitors here are engineers who <i>can't</i> sell. Lean into it hard.</span>
+    </div></div>
+    <div class="rec"><div class="n"></div><div>
+      <h4>Fix trust + support IA in the redesign <span class="prio p-now">DO NOW</span></h4>
+      <p>Real Docs / FAQ / System Requirements / Contact pages (not links to /about), visible reviews as they come in, a press/endorsement strip, and resolved factual inconsistencies (74 vs 79). Low effort, high credibility return for an unknown brand asking for money.</p>
+    </div></div>
+    <div class="rec"><div class="n"></div><div>
+      <h4>Frame Prism Link as the bundle/upsell reason <span class="prio p-next">NEXT</span></h4>
+      <p>Keep interoperability — but sell it as "buy the collection and they modulate each other" and "your library grows into a system," i.e., a driver of bigger carts and repeat purchase, not the cold-open pitch. Bundles are how every catalog on this list raises order value.</p>
+    </div></div>
+    <div class="rec"><div class="n"></div><div>
+      <h4>Add fast, high-margin revenue lines <span class="prio p-next">NEXT</span></h4>
+      <p>Your MIDI pattern library (10k patterns) and preset packs are low-effort, high-margin, and can ship <i>before</i> the big instruments to start cash flow and prove demand. Given your husband's engineering chops, <b>bespoke/custom sound-design work</b> (à la SonalSystem) can fund the company early while the catalog builds.</p>
+      <span class="why">Revenue this quarter, not next year — directly serves the "as fast as possible" goal.</span>
+    </div></div>
+    <div class="rec"><div class="n"></div><div>
+      <h4>Keep perpetual + bundles now; consider recurring later <span class="prio p-later">LATER</span></h4>
+      <p>Your anti-subscription, transparent pricing is a genuine differentiator and lowers first-purchase friction — right for launch. Once you have a catalog and a base, a rent-to-own or "all-access" plan (Baby Audio, Output, Black Salt models) can add predictable recurring revenue without abandoning perpetual buyers.</p>
+    </div></div>
+    <div class="rec"><div class="n"></div><div>
+      <h4>Build a content/SEO surface <span class="prio p-later">LATER</span></h4>
+      <p>Heavyocity, Spitfire, and Baby Audio all run editorial/tutorial content that compounds discovery. A blog on world-instrument technique, scoring, and "how it's modeled" plays perfectly to your niche and your marketing lead — a durable, cheap acquisition channel once the launch dust settles.</p>
+    </div></div>
+  </div>
+
+  <hr class="soft">
+  <div class="callout">
+    <h3>Bottom line</h3>
+    <p><b>World instruments = yes, that's your lead.</b> It's the differentiated, ownable, defensible story — pursue it, but focus it and de-risk the cultural authenticity with real players. <b>Interoperability = keep it, demote it</b> to an upsell/retention message. And the fastest revenue lever isn't a new feature at all — it's <b>narrowing the launch, proving the sound with demos, and pointing your unusually strong sales+marketing team at a specific, reachable audience</b> (composers, sync/game audio, world-music producers) rather than trying to be everything to everyone on day one.</p>
+  </div>
+</section>
+
+<section id="sources" class="hide">
+  <h2><span class="bar"></span>Sources &amp; confidence</h2>
+  <p class="lead">Primary sources were the companies' own sites; scale/founding details were corroborated with registries and press. Team size and revenue are estimates — no company here discloses financials.</p>
+  <div class="panel">
+    <div class="srclist">
+      <a href="https://blacksaltaudio.com/">blacksaltaudio.com</a><br>
+      <a href="https://teletoneaudio.com/">teletoneaudio.com</a> · <a href="https://teletoneaudio.com/pages/about">/about</a><br>
+      <a href="https://heavyocity.com/">heavyocity.com</a> · <a href="https://heavyocity.com/pages/history">/history</a><br>
+      <a href="https://www.vynlaudio.com/">vynlaudio.com</a> · <a href="https://www.vynlaudio.com/story">/story</a><br>
+      <a href="https://www.westwoodinstruments.com/">westwoodinstruments.com</a> · <a href="https://find-and-update.company-information.service.gov.uk/company/12343463">UK registry 12343463</a><br>
+      <a href="https://sonalsystem.com/">sonalsystem.com</a> · <a href="https://sonalsystem.com/pages/about">/about</a><br>
+      <a href="https://valhalladsp.com/about/">valhalladsp.com/about</a> · <a href="https://en.wikipedia.org/wiki/ValhallaDSP">Wikipedia</a><br>
+      <a href="https://babyaud.io/about">babyaud.io/about</a> · <a href="https://babyaud.io/blog/baby-audio-has-acquired-denise-audio">Denise acquisition</a><br>
+      <a href="https://www.fabfilter.com/about">fabfilter.com/about</a> · <a href="https://en.wikipedia.org/wiki/FabFilter">Wikipedia</a><br>
+      <a href="https://output.com/">output.com</a> · <a href="https://www.prnewswire.com/news-releases/output-announces-45-million-series-a-investment-from-summit-partners-301156441.html">$45M Series A</a><br>
+      <a href="https://www.spitfireaudio.com/pages/about-us">spitfireaudio.com/about</a> · <a href="https://tracxn.com/d/companies/spitfireaudio/">Tracxn</a><br>
+      <a href="https://www.deniseaudio.com/">deniseaudio.com</a> · <a href="https://goodhertz.com/about/">goodhertz.com/about</a><br>
+      <a href="https://prismaudiolabs.co/">prismaudiolabs.co</a> (subject)<br>
+      <a href="https://www.native-instruments.com/">native-instruments.com</a> · <a href="https://en.wikipedia.org/wiki/Native_Instruments">Wikipedia</a> · <a href="https://www.inmusicbrands.com/press/inmusic-native/">inMusic acquisition (May 2026)</a><br>
+      <a href="https://www.waves.com/">waves.com</a> · <a href="https://en.wikipedia.org/wiki/Waves_Audio">Wikipedia</a><br>
+      <a href="https://www.soundtoys.com/">soundtoys.com</a><br>
+      <a href="https://www.soundsonline.com/">soundsonline.com (EastWest)</a> · <a href="https://www.soundsonline.com/about-us">/about-us</a><br>
+      <a href="https://www.spectrasonics.net/">spectrasonics.net</a> · <a href="https://www.spectrasonics.net/company/">/company</a><br>
+      <a href="https://www.uaudio.com/">uaudio.com</a> · <a href="https://en.wikipedia.org/wiki/Universal_Audio_(company)">Wikipedia</a><br>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    Prepared for Prism Audio Labs · Competitive analysis of 18 audio-software companies + site-architecture review · July 2026.<br>
+    Team-size and revenue figures are third-party estimates; founding years and catalog counts verified against company sites and public registries where possible. Confidence flagged in the source notes.
+  </div>
+</footer>
+
+<script>
+const T={fx:'t-fx',samp:'t-samp',hyb:'t-hyb',content:'t-content'};
+const TLABEL={fx:'Effects',samp:'Instruments',hyb:'Hybrid',content:'Content'};
+const COLOR={fx:'#ff6a3d',samp:'#7b5cff',hyb:'#25d0c0',content:'#f5c451'};
+const data=[
+ {name:'Black Salt Audio',group:'core',type:'fx',founded:2020,foundedTxt:'~2020',team:6,teamTxt:'~3–8',products:16,productsTxt:'16',
+  core:'Mixing/FX plugins + courses, samples & a producer community',focus:'Mixing processors — drums, bass, vocals, guitars; EQ, comp, saturation, clipping, delay',
+  eco:'Yes — Telos suite + everything unified under one subscription',price:'Subscription-first $99/yr (or $12/mo) + perpetual $59–99',
+  scale:'Indie; claims 60,000+ users, name-engineer testimonials',
+  founder:'Jordan Valeriote (mix engineer) + Shawn Barnes (trailer composer) + a DSP dev',
+  well:'Turned a mixing philosophy ("trust your ears, stop over-engineering") into a brand, and bundles plugins + education + community into recurring revenue.'},
+ {name:'Teletone Audio',group:'core',type:'samp',founded:2018,foundedTxt:'2018',team:3,teamTxt:'1–5 (solo-led)',products:18,productsTxt:'~18',
+  core:'Sampled Kontakt instruments + a few FX plugins + beat packs',focus:'Cinematic/nostalgic keys & pianos, synths, drums, guitars/bass; spectral & spring reverb FX',
+  eco:'Loose — shared house aesthetic + "build-your-own-bundle" discounts',price:'Perpetual $79–129; tiered bundle discounts; no subscription',
+  scale:'Respected boutique; official NI NKS partner; EDU program',
+  founder:'Jeremy Larson — classically-trained pianist/composer (Nashville)',
+  well:'A strong mood/nostalgia aesthetic and inline audio demos do the selling; a mix-and-match bundle builder lifts order value.'},
+ {name:'Heavyocity Media',group:'core',type:'hyb',founded:2006,foundedTxt:'~2006',team:12,teamTxt:'~8–15',products:45,productsTxt:'45+',
+  core:'Kontakt cinematic instruments + genuine DSP FX plugins',focus:'Cinematic scoring: orchestral, epic percussion, hybrid tools, keys/synths, vocals, guitars, FX',
+  eco:'Yes — shared proprietary engine (Trigger/Motion/Arp), sub-lines & bundles',price:'Perpetual $99–249 + bundles + frequent big sales (up to 75% off)',
+  scale:'Established leader; ~20 yrs; award-winning; est. ~$1–3M rev',
+  founder:'Dave Fraser & Neil Goldberg — Berklee composers/sound designers (NYC)',
+  well:'Deepest catalog + a shared engine that makes 45 products feel like one system; heaviest editorial/podcast/artist content marketing on this list.'},
+ {name:'Vynl Audio',group:'core',type:'fx',founded:2024,foundedTxt:'~2024',team:2,teamTxt:'1–3 (solo)',products:2,productsTxt:'2',
+  core:'Effects plugins only (own DSP)',focus:'Guitar/bass tone & vintage effect-chain coloring for songwriters/producers',
+  eco:'Deliberate "no-overlap" suite — one plugin per job, building a curated system',price:'Perpetual $49.99 each; 2-plugin bundle $79.99',
+  scale:'Very new; claims 2,000+ users; creator-video & trend-led marketing',
+  founder:'Jayden — solo founder, launched at ~17',
+  well:'Proof you can launch with TWO plugins and a sharp, trend-tied hook ("that Mk.Gee tone") and build an audience fast. Focus over breadth.'},
+ {name:'Westwood Instruments',group:'core',type:'samp',founded:2019,foundedTxt:'2019',team:9,teamTxt:'~5–15',products:19,productsTxt:'~17–20 + free',
+  core:'Kontakt sample libraries + merch; free "Roots" tier as funnel',focus:'Character pianos, choir, solo strings/brass/winds, percussion, guitar, synths — cinematic',
+  eco:'Yes — thematic series (Alt, Lost, Rotor, Novella, Untamed) cross-sold as bundles',price:'Perpetual £38–£597; free tier; edu + first-order discounts',
+  scale:'Award-winning (SLR); A-list endorsements (Coldplay, Bond, Saw)',
+  founder:'Rob Hill (2019, London)',
+  well:'"Character over perfection" positioning + a free-instrument funnel + real composer endorsements — a boutique playbook Prism can mirror closely.'},
+ {name:'SonalSystem',group:'core',type:'content',founded:2017,foundedTxt:'2017',team:3,teamTxt:'Solo + collaborators',products:40,productsTxt:'Dozens (40+)',
+  core:'Sample packs + presets (for 3rd-party gear) + bespoke custom-audio service',focus:'Drums, guitars, synth textures, cinematic/ambient, modular/Eurorack',
+  eco:'Catalog of standalone packs + curated "vault" bundles',price:'Perpetual $29.99–149.99; bundles; no subscription',
+  scale:'142+ reviews; platinum credits; Splice/Output/NI content partnerships',
+  founder:'Allen Morgan — producer/sound designer (LA/Nashville)',
+  well:'Leverages a founder\'s credits + partner logos for authority, and sells a bespoke service alongside packs — an early-revenue model worth noting.'},
+ {name:'Valhalla DSP',group:'sug',type:'fx',founded:2009,foundedTxt:'2009',team:3,teamTxt:'~3',products:10,productsTxt:'10 (3 free)',
+  core:'Plugins only — nothing else',focus:'Reverb & delay/modulation. Owns the word "reverb" in producers\' minds',
+  eco:'Standalone with a shared minimalist design language; no bundles',price:'Flat $50 each, never on sale, ever; 3 plugins free',
+  scale:'Cult following; industry-standard reverbs; bootstrapped & profitable',
+  founder:'Sean & Kristin Costello — built on a "kitchen table" after a 2008 layoff',
+  well:'Radical focus + honest flat pricing (never punished for buying early) + free plugins as a viral funnel. The blueprint for a lean, trusted boutique.'},
+ {name:'Baby Audio',group:'sug',type:'hyb',founded:2019,foundedTxt:'2019',team:14,teamTxt:'~14',products:14,productsTxt:'~13–14',
+  core:'Effects + instrument plugins + presets + subscription + iOS apps + forum',focus:'Creative FX (tape, reverb, delay, parallel comp, vocal) and synths',
+  eco:'Yes — Complete Bundle, "buy 2 get 1", subscription unifying the catalog',price:'Hybrid: $59–99 perpetual + rent-to-own subscription + cheap preset packs',
+  scale:'Fast-growing; many awards; Grammy-producer endorsers; acquired Denise Audio',
+  founder:'Caspar Bock (2019, NYC → LA)',
+  well:'Best-in-class branding — a consistent premium 3D visual identity, clever product names, awards wall, and marketing mechanics that punch above its size.'},
+ {name:'FabFilter',group:'sug',type:'fx',founded:2002,foundedTxt:'2002',team:9,teamTxt:'~9',products:14,productsTxt:'~14',
+  core:'Plugins only',focus:'Mixing/mastering (EQ, comp, limit, reverb, de-ess, gate) + creative FX & synths',
+  eco:'Yes — use-case bundles (Total/Mixing/Mastering) + shared interface language',price:'Perpetual $35–199; bundles to ~$1,299; generous free updates',
+  scale:'The gold standard; Pro-Q is among the most-used EQs in pro audio',
+  founder:'Frederik Slijkerman & Floris Klinkert (2002, Amsterdam)',
+  well:'The interface IS the marketing — interactive, best-in-class UX — plus no-catch 30-day full trials that let quality close the sale.'},
+ {name:'Output',group:'sug',type:'hyb',founded:2013,foundedTxt:'2013',team:60,teamTxt:'Large (VC-backed)',products:12,productsTxt:'~9 + Arcade',
+  core:'Premium instrument/FX plugins + a cloud sample/loop subscription (Arcade)',focus:'Vocals, strings, brass, bass, pads, granular & rhythmic FX; modern pop/hip-hop/cinematic',
+  eco:'Strong — Arcade + "Output One" all-in-one subscription + perpetual bundle',price:'Dual: ~$199 perpetual plugins + subscriptions ($10/mo class)',
+  scale:'$1M in year one; 5× Inc 5000; $45M Series A (2020)',
+  founder:'Gregg Lehrman — composer (trained under Hans Zimmer), LA',
+  well:'Turned a sample library into recurring SaaS revenue (Arcade) — the clearest example of monetizing an ecosystem via subscription.'},
+ {name:'Spitfire Audio',group:'sug',type:'samp',founded:2007,foundedTxt:'2007',team:100,teamTxt:'~100',products:200,productsTxt:'Hundreds',
+  core:'Premium sampled instruments recorded with real players in world-class rooms',focus:'Full orchestral + choirs, guitars, synths, world/folk, experimental',
+  eco:'Yes — Spitfire app, free LABS tier, Discover→Originals→flagship ladders',price:'Perpetual per library (free tiers to £299+); heavy seasonal sales; edu',
+  scale:'Industry benchmark (BBCSO, Abbey Road, Hans Zimmer); acquired by Splice 2025',
+  founder:'Christian Henson & Paul Thomson — composers (2007, London)',
+  well:'Reference-class IA: audio demo on every product, an AI "describe-a-mood" recommender, free LABS funnel, and tiered ladders that upsell over years.'},
+ {name:'Modartt (Pianoteq)',group:'sug',type:'samp',founded:2006,foundedTxt:'2006',team:12,teamTxt:'~10–15 (est.)',products:22,productsTxt:'2 modeling apps · 20+ packs',
+  core:'Physically-modeled virtual instruments — real-time modeling engines (Pianoteq, Organteq), no samples',focus:'Acoustic & electric pianos (licensed Steinway, Bösendorfer, Bechstein, Blüthner, Kawai…), plus harps, harpsichords, vibes, guitars & historical keyboards',
+  eco:'Yes — one Pianoteq engine; 20+ add-on instrument packs load into it; Stage→Standard→PRO edition upgrades',price:'Perpetual only — Stage/Standard/PRO editions (~€129/€249/€419) + ~€49 packs (Studio bundle = all packs); free updates; no subscription',
+  scale:'The physical-modeling benchmark; ~20 yrs; small bootstrapped French team; used across film/TV & touring rigs',
+  founder:'Philippe Guillaume — applied mathematician (2006, Toulouse, France)',
+  well:'The physical-modeling benchmark and the closest existing proof of Prism\'s thesis: modeled (not sampled) instruments = tiny installs, seamless pp→ff dynamics and true playability. One engine scaled by add-on packs (a satellite model like Spectrasonics) on honest, never-subscription perpetual pricing — and Pianoteq\'s electric pianos compete head-on with Prism\'s Lunar.'},
+ {name:'Native Instruments',group:'big',type:'hyb',founded:1996,foundedTxt:'1996',team:450,teamTxt:'~400–500 (post-layoffs)',products:300,productsTxt:'300+ SKUs',
+  core:'Komplete instrument/FX ecosystem built around the Kontakt platform, plus Maschine & Traktor hardware',focus:'Everything-store for producers: sampled instruments, synths, grooveboxes, DJ; iZotope AI tools bundled in',
+  eco:'Deepest in the industry — free Kontakt Player hosts thousands of 3rd-party libraries; NKS hardware standard; NI 360 subscription',price:'Perpetual editions $199–$1,799 + upgrade/crossgrade ladders + 50%-off seasonal sales; NI 360 sub $15–50/mo',
+  scale:'Category king (~€90–100M historic) — but preliminary insolvency Jan 2026; acquired by inMusic May 2026',
+  founder:'Stephan Schmitt & Volker Hinz, 1996, Berlin',
+  well:'Platform power: the free Kontakt Player + NKS standard made thousands of third parties build NI\'s moat for them. Also a warning — buyout debt sank a category king; small and solvent is a strategy. And Prism could ship INTO their ecosystem.'},
+ {name:'Waves Audio',group:'big',type:'fx',founded:1992,foundedTxt:'1992',team:300,teamTxt:'~260–560 (est.)',products:240,productsTxt:'240+',
+  core:'The original and largest mixing/mastering FX catalog + live-sound consoles + OEM consumer audio (Maxx)',focus:'Studio effects — EQ, comp, reverb, vocal tools, console emulations; celebrity-engineer signature lines',
+  eco:'Waves Central licenser, StudioVerse preset-chain community, Creative Access subscription, SoundGrid live ecosystem',price:'Perpetual $29–299 real prices under fake $3,999 MSRPs (perma-74–93% off) + Creative Access sub $14.99–24.99/mo + paid WUP update plan',
+  scale:'Plugin market-share leader; Technical Grammy 2011; est. ~$100M; shipped the first commercial audio plugin (1992)',
+  founder:'Gilad Keren & Meir Sha\'ashua, 1992, Tel Aviv',
+  well:'Their 2023 attempt to force subscription-only died in 3 days of user revolt — ownership and license simplicity ARE the product. A boutique with honest perpetual pricing weaponizes the trust Waves keeps burning.'},
+ {name:'Soundtoys',group:'big',type:'fx',founded:1996,foundedTxt:'1996',team:16,teamTxt:'~16 (deliberately small)',products:23,productsTxt:'23 (one bundle)',
+  core:'Creative analog-flavored effect plugins — delay, saturation, pitch, modulation, reverb',focus:'Character/color processing loosely modeled on classic hardware (Eventide, EMT, Space Echo)',
+  eco:'Shared engine; Effect Rack chains all plugins into one modular unit; ONE flagship bundle (Soundtoys 5); no subscription',price:'Perpetual $99–199 ($599 bundle); ritualized 50–80% sales; free 30-day FULL-bundle trial; upgrade credit toward the bundle',
+  scale:'Near-default status in pop/hip-hop mixing; still selling v5 a decade on — polish over cadence',
+  founder:'Ken Bogdanowicz & Bob Belcher (ex-Eventide engineers), 1996, Burlington VT',
+  well:'The existence proof that ~16 people and 23 opinionated, personality-rich effects can reach near-default status: one flagship bundle, full-bundle trials, two predictable mega-sales a year, artist stories instead of feature sheets.'},
+ {name:'EastWest / Quantum Leap',group:'big',type:'samp',founded:1988,foundedTxt:'1988',team:40,teamTxt:'~20–50 (est.)',products:70,productsTxt:'70+ libraries / 43k instruments',
+  core:'Deep-sampled orchestral, choral & cinematic libraries recorded at their own Hollywood studio, in the proprietary Opus engine',focus:'Hollywood-scale orchestra, choirs, cinematic percussion — and world/ethnic (RA, Silk): the incumbent in Prism\'s niche',
+  eco:'Closed vertical ecosystem — everything in Opus; nearly the whole catalog in the ComposerCloud+ subscription',price:'Perpetual $199–599 perma-discounted 50–70% + ComposerCloud+ $19.99/mo or $149/yr; 14-day free trial',
+  scale:'Self-described #1 virtual-instrument producer; ~38 years; owns EastWest Studios (206 Grammy noms recorded there)',
+  founder:'Doug Rogers, 1988, Hollywood; Quantum Leap co-brand with Nick Phoenix from 1997',
+  well:'Owns a sonic asset nobody can copy ("recorded at EastWest Studios"). Their RA/Silk world libraries are heavyweight, Kontakt-era sample banks — Prism\'s counter is modeled playability, tiny footprints and real-player provenance, not breadth.'},
+ {name:'Spectrasonics',group:'big',type:'samp',founded:1994,foundedTxt:'1994',team:25,teamTxt:'~20–30',products:4,productsTxt:'4 core + 5 extensions',
+  core:'Deep flagship instruments (STEAM engine) with decade-long lifecycles and years of free major updates',focus:'One definitive instrument per category: Omnisphere (synth), Keyscape (keys), Trilian (bass), Stylus RMX (grooves)',
+  eco:'Satellite ecosystem — Keyscape & Trilian load INSIDE Omnisphere; Sonic Extensions expand it; every purchase deepens the last',price:'Perpetual only, $299–499; famously never discounts direct; ~8 years of free updates before a $199 paid upgrade',
+  scale:'Omnisphere is arguably the most-used soft synth in film/TV/pop — 4 products in 30+ years, all category benchmarks',
+  founder:'Eric & Lorey Persing (husband-and-wife; ex-Roland chief sound designer), 1994, Burbank',
+  well:'The closest model to Prism: a husband-and-wife shop whose satellite products plug into a flagship engine — exactly what Prism Link should grow into. Radical catalog discipline + free-update generosity justify premium, never-discounted pricing.'},
+ {name:'Universal Audio',group:'big',type:'fx',founded:1999,foundedTxt:'1958 / re-founded 1999',team:450,teamTxt:'~200–500',products:211,productsTxt:'211 plugins + hardware',
+  core:'Analog-emulation UAD plugins + LUNA DAW, riding an Apollo interface hardware core',focus:'Licensed vintage emulation — Neve, SSL, API, Studer, Fairchild — "audio archaeology"',
+  eco:'Tight but confusing: UAD-2 DSP vs UADx native vs Spark subscription + Apollo hardware + LUNA, all via UA Connect account',price:'Perpetual $29–349 with 80–90% doorbusters + Spark sub $19.99/mo; free tier (8 plugins + free LUNA DAW)',
+  scale:'Premium-interface market leader; est. $50–150M; Technical Grammy 2009; venture-backed',
+  founder:'Bill Putnam Sr., 1958; re-founded by sons Bill Jr. & James Putnam, 1999, Santa Cruz',
+  well:'Licensed heritage = pricing power — the name certifies the sound. But three plugin formats and account gymnastics confuse buyers; a boutique wins with one format, one installer, and a human answering support email.'},
+];
+const prismPlanned={founded:2026,products:79,team:2};
+const ctx=document.getElementById('bubble');
+function bubbleData(){
+  const groups={};
+  data.forEach(d=>{(groups[d.type]=groups[d.type]||[]).push({x:d.founded,y:d.products,r:Math.min(28,Math.max(6,Math.sqrt(d.team)*3.2)),co:d.name,team:d.teamTxt})});
+  const ds=Object.keys(groups).map(t=>({label:TLABEL[t],data:groups[t],backgroundColor:COLOR[t]+'cc',borderColor:COLOR[t],borderWidth:1}));
+  ds.push({label:'Prism (planned)',data:[{x:prismPlanned.founded,y:prismPlanned.products,r:8,co:'Prism Audio Labs',team:'2 (planned catalog)'}],
+    backgroundColor:'rgba(255,255,255,0)',borderColor:'#ff3d7f',borderWidth:2.5});
+  return ds;
+}
+new Chart(ctx,{type:'bubble',data:{datasets:bubbleData()},options:{
+  responsive:true,maintainAspectRatio:false,layout:{padding:6},
+  plugins:{legend:{display:false},tooltip:{callbacks:{label:(c)=>` ${c.raw.co}: founded ${c.raw.x}, ${c.raw.y} products, team ${c.raw.team}`}}},
+  scales:{
+    x:{min:1986,max:2028,title:{display:true,text:'Year founded',color:'#9aa6bd'},grid:{color:'#1c2330'},ticks:{color:'#9aa6bd',stepSize:6}},
+    y:{type:'logarithmic',min:1,max:500,title:{display:true,text:'Number of products (log scale)',color:'#9aa6bd'},grid:{color:'#1c2330'},
+       ticks:{color:'#9aa6bd',callback:(v)=>[1,2,10,20,50,100,200,500].includes(v)?v:''}}
+  }
+}});
+const tbody=document.querySelector('#mtable tbody');
+let sortKey='products',sortDir=-1,filterType='all',filterGroup=null;
+function renderTable(){
+  let rows=data.filter(d=>(filterType==='all'||d.type===filterType)&&(!filterGroup||d.group===filterGroup));
+  rows.sort((a,b)=>{let x=a[sortKey],y=b[sortKey];if(typeof x==='string'){x=x.toLowerCase();y=y.toLowerCase();}return x<y?-1*sortDir:x>y?1*sortDir:0;});
+  tbody.innerHTML=rows.map(d=>`<tr>
+    <td class="co">${d.name}<span class="core-badge ${d.group==='sug'?'sug-badge':d.group==='big'?'big-badge':''}">${d.group==='core'?'YOUR LIST':d.group==='big'?'MAJOR':'SUGGESTED'}</span></td>
+    <td>${d.foundedTxt}</td><td>${d.teamTxt}</td><td><b>${d.productsTxt}</b></td>
+    <td><span class="tag ${T[d.type]}">${TLABEL[d.type]}</span><div style="margin-top:5px;color:var(--mut)">${d.core}</div></td>
+    <td style="color:var(--mut)">${d.focus}</td><td>${d.eco}</td>
+    <td style="color:var(--mut)">${d.price}</td><td style="color:var(--mut)">${d.scale}</td></tr>`).join('');
+}
+document.querySelectorAll('#mtable thead th').forEach(th=>th.addEventListener('click',()=>{
+  const k=th.dataset.s;if(sortKey===k)sortDir*=-1;else{sortKey=k;sortDir=1;}renderTable();}));
+document.querySelectorAll('#mfilters .chip').forEach(c=>c.addEventListener('click',()=>{
+  const f=c.dataset.f;
+  if(['all','fx','samp','hyb','content'].includes(f)){
+    filterType=f;document.querySelectorAll('#mfilters .chip').forEach(x=>{if(['all','fx','samp','hyb','content'].includes(x.dataset.f))x.classList.remove('on')});c.classList.add('on');
+  }else{
+    if(filterGroup===f){filterGroup=null;c.classList.remove('on');}else{filterGroup=f;document.querySelectorAll('#mfilters .chip').forEach(x=>{if(['core','sug','big'].includes(x.dataset.f))x.classList.remove('on')});c.classList.add('on');}
+  }
+  renderTable();}));
+renderTable();
+document.getElementById('cardgrid').innerHTML=data.map(d=>`
+ <div class="card"><div class="top"><div><h3>${d.name}</h3><div class="yr">${d.foundedTxt} · ${d.founder}</div></div>
+   <span class="tag ${T[d.type]}">${TLABEL[d.type]}</span></div>
+   <div class="body">
+     <div class="row"><div class="k">Products</div><div class="v"><b>${d.productsTxt}</b> · team ${d.teamTxt}</div></div>
+     <div class="row"><div class="k">Core</div><div class="v">${d.core}</div></div>
+     <div class="row"><div class="k">Focus</div><div class="v">${d.focus}</div></div>
+     <div class="row"><div class="k">Works together</div><div class="v">${d.eco}</div></div>
+     <div class="row"><div class="k">Pricing</div><div class="v">${d.price}</div></div>
+     <div class="row"><div class="k">Scale</div><div class="v">${d.scale}</div></div>
+     <div class="well"><b>What to learn from them:</b> ${d.well}</div>
+   </div></div>`).join('')
+ + `<div class="card"><div class="top"><div><h3>+ Bonus: Denise Audio &amp; Goodhertz</h3><div class="yr">Two small "clever-effects" makers</div></div><span class="tag t-fx">Effects</span></div>
+    <div class="body"><div class="row"><div class="k">Denise</div><div class="v">Amsterdam; single-purpose pro FX (Perfect Room, Bass XXL); acquired by Baby Audio in 2023.</div></div>
+    <div class="row"><div class="k">Goodhertz</div><div class="v">LA, 2012; ~20 character FX with playful interactive UIs, 30-day trials, free tools, loyal pro following.</div></div>
+    <div class="well"><b>Lesson:</b> a distinctive voice + free tools + trials can build a devoted following at very small scale.</div></div></div>`;
+const ia=[
+ {name:'Black Salt Audio',plat:'Custom site',nav:'Plugins · Academy · Support · Join Artist Pass',pages:['Home','Shop grid','Product pages','Telos bundle','Academy','Support/FAQ','Account'],wins:['Before/after "Plain vs +Salt" audio toggles','Free trials (no card)','Value table: "$1,244 for $99"','Social proof (60k, testimonials)']},
+ {name:'Teletone Audio',plat:'Shopify',nav:'Bundles · Drums · Effects · Keys · Synths · Guitars · Support · Login',pages:['Home','Category collections','Product pages','Build-a-bundle','Beat Packs','About (founder)','FAQ','Manuals','EDU','Gift cards'],wins:['Inline audio demo players','Best-seller / Trending badges','Mix-and-match bundle builder','Newsletter popup 10% off']},
+ {name:'Heavyocity',plat:'Shopify',nav:'Shop · Experience · Support',pages:['Home','Category collections','Product pages','Bundles','Sale','Blog','Artists','Podcast','Reviews','Support (Zendesk)','Portal','EDU'],wins:['Video hero + audio embeds','Rich editorial "Experience" hub','Big sale banners + express checkout','International currency']},
+ {name:'Vynl Audio',plat:'React SPA',nav:'Plugins · Support · Our Story · Sign in',pages:['Home','Product pages','Plugins list','Our Story','Support','Account'],wins:['"Play demo" on hero','Embedded creator videos','"From our inbox" customer quotes','Pinned bundle upsell bar']},
+ {name:'Westwood Instruments',plat:'WordPress / Woo',nav:'Instruments (mega-menu) · Merch · About · Music',pages:['Home','Instruments list','Product pages','Bundles','Roots (free)','About','Music','Merch','Students & Educators','Careers','Help Centre'],wins:['Audio demos + UI walkthrough video','Award badges + pro testimonials','Free-instrument funnel','Edu + first-order discounts']},
+ {name:'SonalSystem',plat:'Shopify',nav:'Home · Our Story · Shop (by vibe / hardware / software) · Artists',pages:['Home','About','Mission','Bespoke (service)','Discography','Product pages','Collection pages','Artist pages','Blog','Contact'],wins:['Audio preview on cards','142-review social-proof wall','Partner-logo authority bar','Bespoke service upsell']},
+ {name:'Valhalla DSP',plat:'Custom site',nav:'Plugins · Learn · About',pages:['Home','Product/shop by category','Plugins index','Learn (blog)','About','Support/FAQ','Gift cards','Account'],wins:['Free plugins as lead magnets','$50-flat, never-on-sale trust','Press testimonials','Robust FAQ (no trials needed)']},
+ {name:'Baby Audio',plat:'Custom site',nav:'Products · Freebies · Trials · Support · Forum',pages:['Home','All Products (filterable)','Product pages','Freebies','Trials','Bundles','Subscription','Blog','Support','Forum','Grants for Good'],wins:['Free trials + freebies','Awards/accolades wall','"Buy 2 get 1 free" cart','Community forum + subscription']},
+ {name:'FabFilter',plat:'Custom site',nav:'Products · Shop · Download · Help · News',pages:['Home','Products (by tier)','Product pages','Shop (bundles)','Download/trials','Help center','News/blog','About'],wins:['30-day full trials of everything','Use-case bundles','Deep help center + video tutorials','Generous free updates']},
+ {name:'Output',plat:'SPA',nav:'Products (FX / Instruments) · Arcade · Bundle · Blog',pages:['Home','Product pages','Shop','Subscription landings','Bundle','Blog','Merch (Drops)','Account'],wins:['Subscription free trials','Video/demo-led product pages','Tiered subscriptions','Editorial content']},
+ {name:'Spitfire Audio',plat:'Shopify',nav:'Instruments (Type/Genre/Collaborator) · Orchestras · More · Wishlist',pages:['Home','Collection pages (faceted filters)','Product pages','Collaborator pages','LABS (free)','Academy','Editorial','Education','App','Support'],wins:['Audio demo on every product','AI "describe-a-mood" recommender','Free LABS funnel + wishlist','Tiered upgrade ladders']},
+ {name:'Modartt (Pianoteq)',plat:'Custom site',nav:'Pianoteq · Organteq · Instruments · Shop · Try · Support',pages:['Home','Pianoteq / Organteq product pages','Instrument-packs catalog','Edition comparison (Stage/Standard/PRO)','Shop / Buy','Free trial download','Demos (audio + video)','Support / FAQ · Forum','Account'],wins:['Fully-working free trial download','Extensive audio + video demos','Clear edition comparison table','Educational discount + loyalty upgrade pricing']},
+ {name:'Native Instruments',plat:'Custom enterprise stack + Native Access app',nav:'Music creation · Audio engineering · DJing · Deals',pages:['Home','Category landings','Product pages','Komplete comparison','360 subscription','Komplete Start (free)','Expansions catalog','Deals hub','Blog','Support + Native Access','NKS partner pages'],wins:['Komplete Start free tier as permanent top-of-funnel','Upgrade/crossgrade engine re-monetizing the same customer','Predictable 50%-off seasonal windows','NKS hardware+software lock-in']},
+ {name:'Waves Audio',plat:'Custom ASP.NET / Azure',nav:'Products · Solutions · Downloads · Support · Learn · Specials',pages:['Plugin pages','Bundle comparison','Creative Access subscription','Specials/deals','Waves Central downloads','Support KB','Learn hub','StudioVerse community','Live-sound solutions','Signature-series pages'],wins:['MSRP anchoring ($3,999 crossed to $299)','Spend-$X-get-free-plugin cart escalators','7-day subscription trial','StudioVerse preset chains as cross-sell engine']},
+ {name:'Soundtoys',plat:'WordPress (custom theme)',nav:'Products · News · Artists · Support · Free Trial · My Account',pages:['Product pages','Bundle (Soundtoys 5)','Effect Rack','Free Trial','News','Artist stories','Support KB','Academic','Seasonal sale landings'],wins:['30-day trial of the ENTIRE bundle','Ritualized deep sales customers plan around','Upgrade credit: every plugin counts toward the bundle','Artist-story content instead of feature sheets']},
+ {name:'EastWest / Quantum Leap',plat:'Custom PHP storefront',nav:'Products · Educational · Community · Support · More',pages:['Home','Product listing w/ filters','Product pages','ComposerCloud+ page','EDU page','New releases / intro pricing','Series hubs (Hollywood, Stormdrum)','About / Studios story','Support & manuals','Installation Center'],wins:['14-day free trial to 43,000 instruments','Celebrity proof on pricing pages (Elfman, Zedd)','Perpetual vs subscription dual path + EDU tier','Perma-sale urgency ($599 slashed to $149)']},
+ {name:'Spectrasonics',plat:'Custom PHP site',nav:'Instruments · Sounds · Support · Sales · Company · Login',pages:['Instrument pages (features/library/videos)','Buy pages w/ upgrade paths','Sonic Extensions','Legacy archive','Support KB','Account portal','Resellers / EDU','Artisans (artist roster)','Featured Work','News'],wins:['Upgrade-path clarity on every Buy page','Artisans + Featured Work: A-list credits as proof','"Works inside Omnisphere" satellite upsell','Multi-buy ladder (2=20%, 3+=30%) — their only sale mechanic']},
+ {name:'Universal Audio',plat:'Shopify',nav:'Shop · Blog · Support · Sale',pages:['Home/promo','Plugin collection w/ filters','Plugin pages','Bundles & Mix Tapes','Spark subscription','LUNA page (free DAW)','Hardware categories','Free plugins page','Help center','Blog / Artist Sessions','Account/Downloads','Dealer finder'],wins:['Free ladder: 8 plugins + free LUNA DAW for account capture','Countdown "Vault" doorbusters','Spark promos ($99/yr, 99¢ trials)','Apollo Artist Sessions tying gear to hit records']},
+];
+document.getElementById('iagrid').innerHTML=ia.map(x=>`
+ <div class="ia"><h4>${x.name}</h4><div class="plat">${x.plat}</div>
+   <div class="navrow"><b>Nav:</b> ${x.nav}</div>
+   <div>${x.pages.map(p=>`<span class="pill">${p}</span>`).join('')}</div>
+   <div class="conv">Conversion features:</div>
+   <div>${x.wins.map(w=>`<span class="pill win">${w}</span>`).join('')}</div></div>`).join('');
+const VIBE={
+  fn:{lbl:'Functional',c:'#25d0c0',t:'#25d0c0'},
+  evo:{lbl:'Evocative',c:'#7b5cff',t:'#b3a2ff'},
+  play:{lbl:'Playful',c:'#f5c451',t:'#f5d98a'},
+  desc:{lbl:'Descriptive',c:'#9aa6bd',t:'#9aa6bd'},
+  epic:{lbl:'Epic-fantasy',c:'#ff3d7f',t:'#ff86b0'},
+  auth:{lbl:'Authentic',c:'#ff6a3d',t:'#ff9d7d'},
+};
+const pnames=[
+ {name:'Black Salt Audio',v:'fn',pat:'Short functional one-word names — often literally the plugin’s job — plus the source-targeted Telos series.',names:['Instinct EQ','Low Control','Silencer','Oxygen','Reviver','Clipper','Escalator','Telos — Vocals','BSA Drum Bus']},
+ {name:'Teletone Audio',v:'evo',pat:'Retro/cinematic coined words that conjure vintage tone and atmosphere.',names:['HYPE','Soulfi','Vespertone','Broadcast Piano','Golden Age Grand','Postcard Piano','Silver Spring','Anamorph','Oracle']},
+ {name:'Heavyocity',v:'evo',pat:'Bold ALL-CAPS cinematic names themed on impact and scoring; versioned families.',names:['Damage 2','Gravity 2','NOVO','FORZO','VENTO','Symphonic Destruction','PUNISH','Mosaic Voices','AEON']},
+ {name:'Vynl Audio',v:'evo',pat:'One evocative product name with gear-referencing numbered sub-modules.',names:['Voyager','Voyager-424','Voyager-8']},
+ {name:'Westwood Instruments',v:'evo',pat:'Minimal, poetic one/two-word names grouped into mood series (Lost, Untamed, Novella, Rotor, Alt).',names:['Alt Piano','Lost Piano','Lost Synth','Solo Strings Untamed','Rotor Solo Violin','Novella Origin','Novella Blackwater','Roots']},
+ {name:'SonalSystem',v:'desc',pat:'Format-led descriptive titles ("Presets for [device] — [name]") plus dramatic ALL-CAPS vaults.',names:['The Atmospheric Toolkit','The Percussion Laboratory','Cinematic Resonance','The Sonic Alchemy Vault','Presets for Continua — Noir','Presets for Generate — Abyss']},
+ {name:'Valhalla DSP',v:'fn',pat:'Norse "Valhalla" prefix on a plain, function-descriptive word. Mythic wrapper, functional core.',names:['Valhalla VintageVerb','Valhalla Room','Valhalla Plate','Valhalla Shimmer','Valhalla Supermassive','Valhalla Delay','Valhalla FreqEcho']},
+ {name:'Baby Audio',v:'play',pat:'Playful pop-culture and nostalgic wordplay over literal descriptions. The best-branded names on the list.',names:['Spaced Out','Comeback Kid','Smooth Operator','Super VHS','Crystalline','Parallel Aggressor','Humanoid','TAIP','BA-1']},
+ {name:'FabFilter',v:'fn',pat:'Clinical "Pro-" prefix plus a letter code for pro tools; single evocative words for creative FX.',names:['Pro-Q 4','Pro-C 3','Pro-L 2','Pro-R 2','Pro-MB','Saturn 2','Timeless 3','Volcano 3','Twin 3']},
+ {name:'Output',v:'evo',pat:'Short, punchy single-word names evoking energy, motion and heat. Modern and tech-forward.',names:['Arcade','Portal','Thermal','Movement','Exhale','Substance','Signal','Rev','Co-Producer']},
+ {name:'Spitfire Audio',v:'evo',pat:'Cinematic names tied to prestige rooms, orchestras and atmospheric imagery.',names:['BBC Symphony Orchestra','Abbey Road Orchestra','Albion One','Spitfire Chamber Strings','Hearth and Hollow','Spitfire Swarms','Originals','LABS']},
+ {name:'Native Instruments',v:'fn',pat:'Teutonic-industrial single words with trademark K-misspellings (Komplete, Kontakt, Kontrol), versioned like software releases.',names:['Komplete 15','Kontakt 8','Massive X','Reaktor 6','Battery 4','Guitar Rig 7 Pro','Maschine+','Traktor Pro 4','Noire','Absynth']},
+ {name:'Waves Audio',v:'fn',pat:'Three layers: terse engineering codes (Q10, L2), borrowed-authority signatures (CLA, SSL, Abbey Road), and precious-metal bundle tiers.',names:['Q10 Paragraphic EQ','L4 Ultramaximizer','H-Delay','CLA-2A','CLA Vocals','SSL 4000 Collection','Abbey Road Collection','Vocal Rider','Clarity Vx','Gold','Mercury']},
+ {name:'Soundtoys',v:'play',pat:'Playful personified compounds with vintage mischief — every plugin sounds like a little creature or gadget; "Little" prefix marks the budget tier.',names:['Decapitator','EchoBoy','Little AlterBoy','Crystallizer','PrimalTap','Radiator','Devil-Loc Deluxe','PanMan','Tremolator','FilterFreak','PhaseMistress','SuperPlate']},
+ {name:'EastWest / Quantum Leap',v:'epic',pat:'Movie-poster naming: place-brand prestige (Hollywood, Symphonic), mythic one-word titles (RA, Goliath), franchise numbering. The one major in Prism\'s register — backed by an actual Hollywood studio.',names:['Hollywood Orchestra','Hollywood Choirs','Hollywood Fantasy Orchestra','Symphonic Orchestra','Stormdrum 3','Voices of the Empire','RA','Silk','Goliath','Forbidden Planet','Ancient Kingdom','Fab Four']},
+ {name:'Spectrasonics',v:'evo',pat:'Grand invented single words (-sphere, -scape, -ian) evoking vast sonic worlds; moody two-word poetry for extensions.',names:['Omnisphere 3','Keyscape','Trilian','Stylus RMX','Atmosphere','Trilogy','Twisted Trees','Nylon Sky','Undercurrent','Distorted Reality']},
+ {name:'Universal Audio',v:'fn',pat:'Two registers: licensed hardware nomenclature reproduced verbatim (model numbers as authenticity) + celestial house brands (Apollo, LUNA, Volt).',names:['Apollo Twin X','LUNA','Volt 276','UAD Spark','Teletronix LA-2A','Neve 1073 Collection','SSL 4000 E Channel Strip','Studer A800','Fairchild Tube Limiter','PolyMAX Synth','Topline Vocal Tune']},
+ {name:'Prism Audio Labs',v:'epic',subject:true,pat:'Two clashing systems: authentic ethnographic names for World Instruments (great) and epic-fantasy/elemental names for FX &amp; synths (the risk). See the breakdown below.',names:['Dragonbreath','Void Noise Machine','Magma Hard Synth','Pyre Spring Reverb','Vortex Auto-Wah','Stellar Supersaw','Aether Ring Mod','— vs —','Kora','Oud','Duduk','Koto','Erhu']},
+];
+document.getElementById('pnamegrid').innerHTML=pnames.map(d=>`
+ <div class="card"${d.subject?' style="border-color:#ff3d7f"':''}><div class="top">
+   <div><h3>${d.name}${d.subject?'<span class="core-badge">THIS IS YOU</span>':''}</h3></div>
+   <span class="tag" style="background:${VIBE[d.v].c}22;color:${VIBE[d.v].t}">${VIBE[d.v].lbl}</span></div>
+   <div class="body"><div style="color:var(--mut);margin-bottom:11px">${d.pat}</div>
+   <div>${d.names.map(n=>`<span class="pill"${n.includes('— vs')?' style="background:none;border:0;color:var(--dim)"':''}>${n}</span>`).join('')}</div></div></div>`).join('');
+const tabs=document.querySelectorAll('nav.tabs button');
+const secs=document.querySelectorAll('section');
+tabs.forEach(b=>b.addEventListener('click',()=>{
+  tabs.forEach(x=>x.classList.remove('active'));b.classList.add('active');
+  secs.forEach(s=>s.classList.add('hide'));
+  document.getElementById(b.dataset.t).classList.remove('hide');
+  window.scrollTo({top:0});
+  if(b.dataset.t==='revenue'&&typeof ramp!=='undefined'&&ramp){requestAnimationFrame(()=>ramp.resize());}
+}));
+
+/* ---- Revenue planner (from the Cowork estimator) ---- */
+const $=id=>document.getElementById(id);
+const ids=['target','vis','conv','ps','u','b','pb','g','ref','fee'];
+const presets={
+  cons:{vis:3000,conv:1.0,ps:45,u:1.4,b:8, pb:199,g:3, ref:5,fee:9},
+  base:{vis:8000,conv:1.5,ps:49,u:1.6,b:12,pb:249,g:6, ref:5,fee:8},
+  opt: {vis:20000,conv:2.5,ps:55,u:1.8,b:18,pb:299,g:10,ref:4,fee:7},
+};
+const money=n=>'$'+Math.round(n).toLocaleString();
+let ramp;
+
+function readVals(){
+  return {
+    target:+$('target').value, takehome:$('takehome').checked,
+    vis:+$('vis').value, conv:+$('conv').value/100,
+    ps:+$('ps').value, u:+$('u').value, b:+$('b').value/100, pb:+$('pb').value,
+    g:+$('g').value/100, ref:+$('ref').value/100, fee:+$('fee').value/100
+  };
+}
+function aovOf(v){ return v.b*v.pb + (1-v.b)*(v.ps*v.u); }
+function netFactor(v){ return (1-v.ref)*(1-v.fee); }
+// gross-up: to net $X take-home, business must net more (self-employ tax + business costs). ~1.55x
+const TAKEHOME_GROSSUP=1.55;
+
+function compute(){
+  const v=readVals();
+  // update labels
+  $('targetV').textContent=money(v.target);
+  $('visV').textContent=(+$('vis').value).toLocaleString();
+  $('convV').textContent=(+$('conv').value).toFixed(1)+'%';
+  $('psV').textContent=$('ps').value;
+  $('uV').textContent=(+$('u').value).toFixed(1);
+  $('bV').textContent=$('b').value+'%';
+  $('pbV').textContent=$('pb').value;
+  $('gV').textContent=$('g').value+'%';
+  $('refV').textContent=$('ref').value+'%';
+  $('feeV').textContent=$('fee').value+'%';
+
+  const aov=aovOf(v);
+  const nf=netFactor(v);
+  const ordersM1=v.vis*v.conv;
+  const netM1=ordersM1*aov*nf;
+
+  // 12-month ramp
+  const monthly=[]; let totalNet=0, totalOrders=0;
+  for(let m=0;m<12;m++){
+    const factor=Math.pow(1+v.g,m);
+    const net=netM1*factor;
+    monthly.push(net);
+    totalNet+=net;
+    totalOrders+=ordersM1*factor;
+  }
+  const runrateAnnual=monthly[11]*12;
+
+  // effective goal in NET REVENUE terms
+  const goalNet = v.takehome ? v.target*TAKEHOME_GROSSUP : v.target;
+
+  // outputs
+  $('annualNet').textContent=money(totalNet);
+  $('m1net').textContent=money(netM1);
+  $('m1orders').textContent=Math.round(ordersM1).toLocaleString()+' orders / month';
+  $('runrate').textContent=money(runrateAnnual);
+  $('aov').textContent=money(aov);
+  $('orders12').textContent=Math.round(totalOrders).toLocaleString();
+  $('goalGross').textContent=money(goalNet);
+
+  const pct=totalNet/goalNet;
+  $('fill').style.width=Math.max(2,Math.min(100,pct*100))+'%';
+  $('pctText').textContent=Math.round(pct*100)+'% of goal';
+  const st=$('status');
+  if(pct>=1){st.className='status st-ok';st.textContent='ON TRACK';}
+  else if(pct>=0.6){st.className='status st-warn';st.textContent='CLOSE — '+Math.round(pct*100)+'%';}
+  else{st.className='status st-bad';st.textContent='SHORT — '+Math.round(pct*100)+'%';}
+
+  // reverse solve: required month-1 net to reach goalNet given growth series
+  const S=monthly.reduce((a,x)=>a+x,0)/netM1; // sum of growth factors
+  const reqNetM1=goalNet/S;
+  const reqGrossM1=reqNetM1/nf;
+  const reqOrdersM1=reqGrossM1/aov;
+  const reqVis=reqOrdersM1/v.conv;
+  const reqConvRate=reqOrdersM1/v.vis;
+  const reqAvgOrders=(goalNet/nf/aov)/12;
+
+  $('reqVis').textContent=Math.round(reqVis).toLocaleString();
+  $('reqConv').textContent=(+$('conv').value).toFixed(1)+'%';
+  $('reqConvRate').textContent=(reqConvRate*100).toFixed(1)+'%';
+  $('reqVisNow').textContent=(+$('vis').value).toLocaleString();
+  $('reqOrders').textContent=Math.round(reqAvgOrders).toLocaleString();
+
+  // income callout
+  const ic=$('income-callout');
+  if(v.takehome){
+    ic.innerHTML='<b>Revenue ≠ take-home.</b> To personally keep '+money(v.target)+', the business needs to generate roughly '+money(goalNet)+' in net revenue first — this model grosses up ~'+TAKEHOME_GROSSUP+'× to cover self-employment tax, business expenses, and the fact that two of you may draw from it. Uncheck the box above to plan against revenue directly instead.';
+  }else{
+    ic.innerHTML='<b>Planning against revenue.</b> This treats '+money(v.target)+' as business net revenue (after refunds & fees, before tax and expenses). Your actual take-home will be lower. Re-check the box above to plan against personal income instead.';
+  }
+
+  drawRamp(monthly);
+}
+
+function drawRamp(monthly){
+  const labels=monthly.map((_,i)=>'M'+(i+1));
+  if(ramp){ramp.data.labels=labels;ramp.data.datasets[0].data=monthly.map(x=>Math.round(x));ramp.update();return;}
+  ramp=new Chart($('ramp'),{type:'bar',data:{labels,datasets:[{
+    label:'Net revenue',data:monthly.map(x=>Math.round(x)),
+    backgroundColor:'rgba(255,61,127,.55)',borderColor:'#ff3d7f',borderWidth:1,borderRadius:5
+  }]},options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+money(c.raw)+' net'}}},
+    scales:{
+      x:{grid:{display:false},ticks:{color:'#9aa6bd'}},
+      y:{grid:{color:'#1c2330'},ticks:{color:'#9aa6bd',callback:v=>'$'+(v/1000)+'k'}}
+    }
+  }});
+}
+
+ids.forEach(id=>$(id).addEventListener('input',compute));
+$('takehome').addEventListener('change',compute);
+$('presets').addEventListener('click',e=>{
+  const b=e.target.closest('button'); if(!b)return;
+  document.querySelectorAll('#presets button').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on');
+  const p=presets[b.dataset.p];
+  for(const k in p){ $(k).value=p[k]; }
+  compute();
+});
+compute();
+</script>
+</body>
+</html>
