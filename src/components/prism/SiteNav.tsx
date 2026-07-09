@@ -9,7 +9,7 @@ export function SiteNav({ theme = "light" }: { theme?: "light" | "dark" }) {
   const links = [
     { label: "Plugins", href: `${prefix}#collection` },
     { label: "Prism Link", href: `${prefix}#link` },
-    { label: "Pricing", href: `${prefix}#pricing` },
+    { label: "Pricing", href: "/pricing" },
     { label: "About", href: `${prefix}#` },
   ];
 

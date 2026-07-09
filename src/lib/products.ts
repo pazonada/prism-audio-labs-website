@@ -111,8 +111,8 @@ export const products: Record<string, ProductData> = {
       heading: "An electric piano with feel in its fingertips.",
       paragraphs: [
         "Lunar models the whole signal path of a classic electric piano — the hammer striking the tine, the pickup's bloom, the preamp's warmth. Play softly and it stays glassy and intimate; dig in and it barks. Every note carries the velocity response that makes these instruments sing.",
-        "The onboard amp, tremolo and cabinet modelling take those raw voices from clean and glassy to overdriven and mean, while built-in chorus, phaser and reverb finish the sound without ever leaving the plugin.",
-        "And because Lunar is a Prism Link receiver, it doesn't just sit still. Link it to Seismic and its tremolo locks to the tempo, its filter opens on the kick, and its dynamics follow the kit — the piano breathes with the groove instead of over it.",
+        "Two voices — a bell-like tine and a breathy reed — cover the range from Rhodes-style shimmer to Wurlitzer bite. A full rack of chorus, phaser, tremolo, drive and reverb is built in, so a patch arrives finished.",
+        "As a Prism Link receiver, Lunar listens to the bus. Link it to Seismic and its tremolo locks to the tempo, its filter opens on the kick, and its dynamics breathe with the kit — the piano stops being static and starts moving with the track.",
       ],
     },
     specs: [
@@ -168,8 +168,8 @@ export const products: Record<string, ProductData> = {
       heading: "Low end with teeth.",
       paragraphs: [
         "Dragon is built for one job: bass that dominates. Two oscillators plus a dedicated sub give it weight, while hard sync, FM and a resonant multimode filter push it into growls, reeses and roars. It stays mono and focused so the low end is always tight.",
-        "A fast, punchy amp-and-filter envelope keeps every note articulate, and multi-stage drive adds the grit that makes a bassline cut through even the busiest mix.",
-        "As a Prism Link receiver, Dragon locks to the beat automatically. Link it to Seismic and it gates to the snare and ducks to the kick — no sidechain, no routing, just a low end that pumps in perfect time.",
+        "A fast envelope and snappy filter make it articulate — plucks, stabs and 16th-note rolls stay defined even under heavy drive. The multi-stage distortion goes from subtle warmth to full destruction.",
+        "As a Prism Link receiver, Dragon locks to the kit. Link it to Seismic and it gates to the snare, ducks its level or filter to the kick, and stays sample-locked to the pattern — the bass and drums move as one instrument.",
       ],
     },
     specs: [
@@ -225,8 +225,8 @@ export const products: Record<string, ProductData> = {
       heading: "Built for the drop.",
       paragraphs: [
         "Stellar lives for the lift. Its oscillator stacks up to seven detuned saws per voice, and layered across unison it becomes a wall of sound that fills every corner of the mix. Pads, leads and plucks all come huge by default.",
-        "Stereo widening and a dedicated width control push it wall-to-wall, while a built-in trance gate, reverb and delay — all tempo-synced — turn a held chord into a moving, euphoric hook.",
-        "And as a Prism Link receiver, that movement isn't manual. Link Stellar to Seismic and its gate rides the step grid while its filter opens on the kick — the lift pulses in perfect time with the rest of the rack.",
+        "A tempo-synced trance gate, shimmering reverb and ping-pong delay are built in, so a single patch is already festival-ready. Stereo width and super-unison controls let you go as wide and tall as the track needs.",
+        "As a Prism Link receiver, Stellar rides the groove. Link it to Seismic and the trance gate locks to the step grid, the filter opens on the kick, and the whole lead pulses in time — no drawing envelopes by hand.",
       ],
     },
     specs: [
@@ -282,8 +282,8 @@ export const products: Record<string, ProductData> = {
       heading: "Simple synth, endless charm.",
       paragraphs: [
         "Comet distils the magic of an early-80s Japanese polysynth into one warm, playable instrument. A single DCO with sub and pulse-width modulation keeps it simple; the character comes from the filter and the chorus, not from menu-diving.",
-        "That famous dual-mode stereo chorus and a springy, resonant low-pass do the heavy lifting — squelchy basses, glassy keys and lush pads all sit ready without a trip through the menus.",
-        "As a Prism Link receiver, Comet moves with the music too. Link it to Seismic and its filter opens on the kick, its amp gates to the pattern, and its chorus rides the tempo — effortless motion, zero routing.",
+        "The star is that chorus — a faithful model of the dual-mode stereo effect that gave these synths their lush, dimensional shimmer. Pads bloom, keys widen, and plucks sparkle the moment you switch it on.",
+        "As a Prism Link receiver, Comet breathes with the track. Link it to Seismic and its filter opens on the kick, its amp gates to the pattern, and its chorus depth moves with the groove — a static pad becomes a living part of the beat.",
       ],
     },
     specs: [

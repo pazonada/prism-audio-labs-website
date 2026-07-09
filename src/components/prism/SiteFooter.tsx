@@ -47,7 +47,7 @@ export function SiteFooter({ variant = "full" }: { variant?: "full" | "mini" }) 
           >
             <Link href="/#collection" style={{ color: "inherit" }}>Plugins</Link>
             <Link href="/#link" style={{ color: "inherit" }}>Prism Link</Link>
-            <Link href="/#pricing" style={{ color: "inherit" }}>Pricing</Link>
+            <Link href="/pricing" style={{ color: "inherit" }}>Pricing</Link>
             <Link href="#" style={{ color: "inherit" }}>Support</Link>
           </div>
         </div>
@@ -113,7 +113,7 @@ export function SiteFooter({ variant = "full" }: { variant?: "full" | "mini" }) 
             <div style={colLabel}>Company</div>
             <div style={{ display: "flex", flexDirection: "column", gap: 11 }}>
               <Link href="#link" style={colLink}>Prism Link</Link>
-              <Link href="#pricing" style={colLink}>Pricing</Link>
+              <Link href="/pricing" style={colLink}>Pricing</Link>
               <Link href="#" style={colLink}>About</Link>
               <Link href="#" style={colLink}>Contact</Link>
             </div>

@@ -62,8 +62,8 @@ export default function HomePage() {
           Plugins that move together.
         </h1>
         <p style={{ fontSize: 19, lineHeight: 1.6, color: "#4a4940", maxWidth: 540, margin: "30px 0 38px" }}>
-          Prism is a small collection of instruments built around a single idea: set a motion once, and the
-          whole rack responds.
+          Prism Audio Labs offer a collection of instruments built around a single idea: set a motion once, and
+          the whole rack responds. New collections are released on a regular basis.
         </p>
         <div style={{ display: "flex", gap: 14, alignItems: "center", flexWrap: "wrap" }}>
           <Link href="#pricing" style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, fontSize: 13, letterSpacing: "0.05em", background: "#1D1C18", color: "#F8F8F5", padding: "14px 28px", borderRadius: 3 }}>
@@ -91,8 +91,7 @@ export default function HomePage() {
             </h2>
           </div>
           <p style={{ fontFamily: mono, fontSize: 12.5, lineHeight: 1.75, color: "#57564c", maxWidth: 340, margin: 0 }}>
-            Each instrument ships with its own interface, presets and sample library on its product page. Press
-            play to preview a sample.
+            Each instrument ships with its own interface, presets and sample library on its product page.
           </p>
         </div>
         <CollectionPlayers />
