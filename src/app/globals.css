@@ -1,183 +1,40 @@
 @import "tailwindcss";
 
-@theme inline {
-  --color-background: #08091A;
-  --color-foreground: #E8ECF0;
-  --color-prism-navy: #1E1B4B;
-  --color-prism-indigo: #3730A3;
-  --color-prism-violet: #7C5CFC;
-  --color-prism-purple: #A78BFA;
-  --color-prism-blue: #2E5266;
-  --color-prism-cyan: #6EE7B7;
-  --color-prism-dark: #14152E;
-  --color-prism-accent: #8B5CF6;
-  --color-prism-gold: #F59E0B;
-  --color-prism-red: #EF4444;
-  --color-prism-ember: #F97316;
-  --color-prism-magma: #DC2626;
-  --color-dragon-start: #FF6B00;
-  --color-dragon-end: #DC2626;
-  --color-earth-brown: #92400E;
-  --color-earth-green: #065F46;
-  --color-water-blue: #0369A1;
-  --color-water-teal: #0D9488;
-  --color-air-silver: #94A3B8;
-  --color-air-white: #E2E8F0;
-  --color-fire-orange: #EA580C;
-  --color-fire-red: #DC2626;
-  --color-cosmos-purple: #7C3AED;
-  --color-cosmos-pink: #EC4899;
-  --color-cosmos-blue: #3B82F6;
-  --color-world-gold: #D97706;
-  --color-world-terracotta: #C2410C;
-  --color-world-indigo: #4F46E5;
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* ============================================================
+   Prism — light "warm paper" design system (Fable v1)
+   ============================================================ */
+:root {
+  --paper: #F8F8F5;
+  --ink: #1D1C18;
+  --blue: #3DA9FC;
+  --oxblood: #8E2F39;
+  --yellow: #E9D77A;
+  --line: #e3dfd5;
 }
 
-html {
-  scroll-behavior: smooth;
-  font-size: 16px;
-}
-
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+html, body { margin: 0; }
 body {
-  background: #08091A;
-  color: #A8B8CC;
-  font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
-  overflow-x: hidden;
-  line-height: 1.7;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Space Grotesk', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+a { color: var(--ink); text-decoration: none; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; }
+::selection { background: var(--blue); color: #fff; }
 
-h1, h2, h3, h4, h5, h6 {
-  line-height: 1.15;
-  letter-spacing: -0.03em;
-  color: #F1F5F9;
+/* Motion — light behaving, not UI showing off */
+@keyframes busPulse {
+  0%   { transform: translateX(-14px); opacity: 0; }
+  8%   { opacity: 1; }
+  92%  { opacity: 1; }
+  100% { transform: translateX(760px); opacity: 0; }
 }
-
-p {
-  line-height: 1.75;
-  color: #A8B8CC;
-}
-
-::selection { background: rgba(124, 92, 252, 0.4); color: #fff; }
-
-::-webkit-scrollbar { width: 5px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #1E293B; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #334155; }
-
-/* Grain — very subtle */
-.grain::before {
-  content: '';
-  position: fixed;
-  inset: -50%;
-  width: 200%;
-  height: 200%;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.02'/%3E%3C/svg%3E");
-  pointer-events: none;
-  z-index: 9999;
-  opacity: 0.08;
-}
-
-/* Glows — subtle on hover only */
-.glow-dragon { box-shadow: 0 0 20px rgba(255,107,0,0.06); }
-.glow-cosmos { box-shadow: 0 0 20px rgba(124,58,237,0.06); }
-.glow-world { box-shadow: 0 0 20px rgba(217,119,6,0.06); }
-.glow-elements { box-shadow: 0 0 20px rgba(14,165,233,0.06); }
-.glow-griot { box-shadow: 0 0 20px rgba(202,138,4,0.06); }
-.glow-raga { box-shadow: 0 0 20px rgba(217,119,6,0.06); }
-.glow-crossroads { box-shadow: 0 0 20px rgba(13,148,136,0.06); }
-.glow-horizons { box-shadow: 0 0 20px rgba(217,119,6,0.06); }
-.glow-fjord { box-shadow: 0 0 20px rgba(123,184,212,0.06); }
-.glow-ceol { box-shadow: 0 0 20px rgba(45,122,79,0.06); }
-.glow-fuego { box-shadow: 0 0 20px rgba(196,30,58,0.06); }
-.glow-tengri { box-shadow: 0 0 20px rgba(178,34,34,0.06); }
-.glow-terra { box-shadow: 0 0 20px rgba(204,119,34,0.06); }
-.glow-selva { box-shadow: 0 0 20px rgba(41,171,135,0.06); }
-.glow-warpath { box-shadow: 0 0 20px rgba(139,0,0,0.06); }
-
-@keyframes borderGlow { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
-.animated-border {
-  background: linear-gradient(270deg, #6EE7B7, #7C5CFC, #3730A3, #A78BFA, #6EE7B7);
-  background-size: 400% 400%;
-  animation: borderGlow 6s ease infinite;
-}
-
-@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
-.animate-float { animation: float 6s ease-in-out infinite; }
-
-@keyframes pulseGlow { 0%,100%{opacity:0.4} 50%{opacity:1} }
-.animate-pulse-glow { animation: pulseGlow 3s ease-in-out infinite; }
-
-.plugin-card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
-.plugin-card:hover { transform: translateY(-3px); }
-
-/* Text gradients */
-.text-gradient-prism { background:linear-gradient(135deg,#6EE7B7,#7C5CFC,#A78BFA); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-.text-gradient-dragon { background:linear-gradient(135deg,#FF8533,#E04040,#FFB366); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-.text-gradient-cosmos { background:linear-gradient(135deg,#9B6EF7,#5B9BF7,#F06CB8); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-.text-gradient-world { background:linear-gradient(135deg,#E5A030,#E06838,#6B64F0); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-.text-gradient-elements { background:linear-gradient(135deg,#38BDF8,#F27830,#10B981,#A0B0C0); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-.text-gradient-griot { background:linear-gradient(135deg,#EAB308,#CA8A04,#F59E0B); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-.text-gradient-raga { background:linear-gradient(135deg,#F59E0B,#EA580C,#DC2626); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-.text-gradient-crossroads { background:linear-gradient(135deg,#14B8A6,#0D9488,#0EA5E9); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-.text-gradient-horizons { background:linear-gradient(135deg,#F59E0B,#EA580C,#E879F9); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-.text-gradient-fjord { background:linear-gradient(135deg,#7DD3FC,#93C5FD,#CBD5E1); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-.text-gradient-ceol { background:linear-gradient(135deg,#4ADE80,#2D7A4F,#A3E635); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-.text-gradient-fuego { background:linear-gradient(135deg,#FB7185,#C41E3A,#F59E0B); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-.text-gradient-tengri { background:linear-gradient(135deg,#F87171,#B22222,#FBBF24); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-.text-gradient-terra { background:linear-gradient(135deg,#F59E0B,#CC7722,#EA580C); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-.text-gradient-selva { background:linear-gradient(135deg,#2DD4BF,#29AB87,#4ADE80); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-.text-gradient-warpath { background:linear-gradient(135deg,#EF4444,#8B0000,#F59E0B); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-
-@keyframes cartBounce { 0%,100%{transform:scale(1)} 50%{transform:scale(1.25)} }
-.cart-bounce { animation: cartBounce 0.3s ease; }
-
-.stripe-input:focus { outline:none; border-color:#7C5CFC; box-shadow:0 0 0 3px rgba(124,92,252,0.12); }
-
-/* Prism triangle logo */
-.prism-logo-triangle {
-  width: 0;
-  height: 0;
-  border-left: 14px solid transparent;
-  border-right: 14px solid transparent;
-  border-bottom: 24px solid transparent;
-  position: relative;
-}
-.prism-logo-triangle::before {
-  content: '';
-  position: absolute;
-  top: 4px;
-  left: -11px;
-  width: 0;
-  height: 0;
-  border-left: 11px solid transparent;
-  border-right: 11px solid transparent;
-  border-bottom: 19px solid #7C5CFC;
-  opacity: 0.8;
-}
-
-/* Infinite marquee animations */
-@keyframes marquee-left {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-@keyframes marquee-right {
-  0% { transform: translateX(-50%); }
-  100% { transform: translateX(0); }
-}
-.animate-marquee-left {
-  animation: marquee-left 60s linear infinite;
-}
-.animate-marquee-right {
-  animation: marquee-right 60s linear infinite;
-}
-.hover-pause:hover {
-  animation-play-state: paused;
-}
-.hover-pause:hover > .animate-marquee-left,
-.hover-pause:hover > .animate-marquee-right {
-  animation-play-state: paused;
+@keyframes waveFlow { to { transform: translateX(var(--shift)); } }
+@keyframes waveReveal {
+  from { clip-path: inset(0 100% 0 0); }
+  to   { clip-path: inset(0 0 0 0); }
 }

@@ -1,269 +1,227 @@
-import Image from 'next/image';
-import { collections, totalPluginCount, getPluginImage, effectsSynthsCollections, worldCollections } from '@/data/plugins';
-import Link from 'next/link';
-import InfiniteMarquee from '@/components/InfiniteMarquee';
+import Link from "next/link";
+import { SiteNav } from "@/components/prism/SiteNav";
+import { SiteFooter } from "@/components/prism/SiteFooter";
+import { CollectionPlayers } from "@/components/prism/CollectionPlayers";
+import { WaveDivider } from "@/components/prism/WaveDivider";
+import { plugins, COLLECTION_PRICE, SINGLE_PRICE } from "@/lib/prism-data";
 
-export default function Home() {
-  const heroBgImages = [
-    { id: 'dragonbreath-pedal', pos: 'top-[10%] left-[5%]', size: 'w-[340px] h-[340px]', opacity: 'opacity-[0.07]' },
-    { id: 'stellar-saw', pos: 'top-[15%] right-[8%]', size: 'w-[280px] h-[280px]', opacity: 'opacity-[0.05]' },
-    { id: 'prism-tabla', pos: 'bottom-[15%] left-[15%]', size: 'w-[260px] h-[260px]', opacity: 'opacity-[0.05]' },
-    { id: 'prism-lur', pos: 'bottom-[10%] right-[12%]', size: 'w-[300px] h-[300px]', opacity: 'opacity-[0.06]' },
-  ];
+const mono = "'IBM Plex Mono', monospace";
+
+const linkPoints = [
+  {
+    n: "01",
+    title: "Shape, not volume",
+    body: "Link moves filter, pitch, drive and space — not just the fader. The plugins are coupled, not ducked.",
+  },
+  {
+    n: "02",
+    title: "Zero setup",
+    body: "Enable Link and every plugin on the same lane finds each other. No hub, no cables, no routing to draw.",
+  },
+  {
+    n: "03",
+    title: "No latency",
+    body: "Only control data crosses the bus — never audio. Nothing to gain-stage, no bleed, no added delay.",
+  },
+];
+
+export default function HomePage() {
+  const nodes = plugins.map((p) => ({
+    num: p.num,
+    name: p.name,
+    role: p.role === "origin" ? "◈ origin" : "receives",
+    roleColor: p.role === "origin" ? "#3DA9FC" : "#6f6d63",
+  }));
 
   return (
-    <>
+    <div style={{ fontFamily: "'Space Grotesk', sans-serif", color: "#1D1C18", background: "#F8F8F5" }}>
+      <SiteNav theme="light" />
+
       {/* HERO */}
-      <section className="relative flex min-h-screen items-center justify-center overflow-hidden">
-        <div className="pointer-events-none absolute inset-0">
-          <div className="absolute left-1/2 top-1/3 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-prism-violet/[0.06] blur-[140px]" />
-          <div className="absolute left-1/4 top-2/3 h-[300px] w-[300px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-prism-indigo/[0.04] blur-[120px]" />
-          <div className="absolute inset-0 opacity-[0.02]" style={{
-            backgroundImage: `linear-gradient(rgba(124,92,252,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(124,92,252,0.3) 1px, transparent 1px)`,
-            backgroundSize: '80px 80px',
-          }} />
+      <header style={{ position: "relative", zIndex: 0, overflow: "hidden", padding: "96px 48px 20px", maxWidth: 1180, margin: "0 auto" }}>
+        <svg
+          width="620"
+          height="560"
+          viewBox="0 0 620 560"
+          fill="none"
+          style={{ position: "absolute", right: -120, top: -120, zIndex: -1, opacity: 0.5, pointerEvents: "none" }}
+        >
+          <g fill="none" stroke="#d4d0c5" strokeWidth="1.2">
+            <circle cx="560" cy="30" r="120" />
+            <circle cx="560" cy="30" r="185" />
+            <circle cx="560" cy="30" r="250" stroke="#3DA9FC" strokeOpacity="0.4" />
+            <circle cx="560" cy="30" r="315" />
+            <circle cx="560" cy="30" r="380" />
+            <circle cx="560" cy="30" r="445" />
+          </g>
+        </svg>
+        <div style={{ fontFamily: mono, fontSize: 12.5, letterSpacing: "0.22em", textTransform: "uppercase", color: "#3DA9FC", marginBottom: 26 }}>
+          Five instruments · one modulation bus
         </div>
-        <div className="pointer-events-none absolute inset-0">
-          {heroBgImages.map((img) => {
-            const src = getPluginImage(img.id);
-            return src ? (
-              <div key={img.id} className={`absolute ${img.pos} ${img.size} ${img.opacity} blur-[2px] rounded-3xl overflow-hidden`}>
-                <Image src={src} alt="" fill className="object-cover" sizes="340px" priority />
-              </div>
-            ) : null;
-          })}
-          <div className="absolute inset-0 bg-[#08091A]/80" />
+        <h1 style={{ fontSize: 92, fontWeight: 600, letterSpacing: "-0.045em", lineHeight: 0.94, margin: 0, maxWidth: 900 }}>
+          Plugins that move together.
+        </h1>
+        <p style={{ fontSize: 19, lineHeight: 1.6, color: "#4a4940", maxWidth: 540, margin: "30px 0 38px" }}>
+          Prism is a small collection of instruments built around a single idea: set a motion once, and the
+          whole rack responds.
+        </p>
+        <div style={{ display: "flex", gap: 14, alignItems: "center", flexWrap: "wrap" }}>
+          <Link href="#pricing" style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, fontSize: 13, letterSpacing: "0.05em", background: "#1D1C18", color: "#F8F8F5", padding: "14px 28px", borderRadius: 3 }}>
+            Get the collection — ${COLLECTION_PRICE}
+          </Link>
+          <Link href="#link" style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, fontSize: 13, letterSpacing: "0.05em", padding: "14px 24px", border: "1px solid #1D1C18", borderRadius: 3 }}>
+            How Prism Link works →
+          </Link>
         </div>
-        <div className="relative mx-auto max-w-5xl px-6 pt-24 pb-20 text-center">
-          <div className="mb-10 inline-flex items-center gap-2.5 rounded-full border border-white/[0.06] bg-white/[0.02] px-5 py-2">
-            <div className="h-1.5 w-1.5 rounded-full bg-prism-cyan animate-pulse-glow" />
-            <span className="text-sm text-slate-400">{totalPluginCount} Plugins &mdash; {collections.length} Collections</span>
+      </header>
+
+      <WaveDivider />
+
+      {/* COLLECTION */}
+      <section id="collection" style={{ maxWidth: 1180, margin: "0 auto", padding: "96px 48px 40px" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexWrap: "wrap", gap: 24, marginBottom: 48 }}>
+          <div>
+            <div style={{ fontFamily: mono, fontSize: 12.5, letterSpacing: "0.22em", textTransform: "uppercase", color: "#8a897d", marginBottom: 18 }}>
+              The collection / 05
+            </div>
+            <h2 style={{ fontSize: 52, fontWeight: 600, letterSpacing: "-0.04em", lineHeight: 1, margin: 0 }}>
+              Five tools launch
+              <br />
+              endless exploration.
+            </h2>
           </div>
-          <h1 className="text-[clamp(3.5rem,9vw,7rem)] font-black tracking-tighter leading-[0.95]">
-            <span className="block text-white">Enter the</span>
-            <span className="block text-gradient-prism">Spectrum</span>
-          </h1>
-          <p className="mx-auto mt-8 max-w-xl text-lg leading-relaxed text-slate-400">
-            {totalPluginCount} instruments and effects forged at the intersection of
-            analog circuitry, spectral synthesis, and world musical heritage. {collections.length} collections. No boundaries.
+          <p style={{ fontFamily: mono, fontSize: 12.5, lineHeight: 1.75, color: "#57564c", maxWidth: 340, margin: 0 }}>
+            Each instrument ships with its own interface, presets and sample library on its product page. Press
+            play to preview a sample.
           </p>
-          <div className="mt-6 inline-flex items-center gap-2 rounded-full border border-prism-cyan/20 bg-prism-cyan/[0.06] px-5 py-2">
-            <div className="h-1.5 w-1.5 rounded-full bg-prism-cyan animate-pulse-glow" />
-            <span className="text-sm font-medium text-prism-cyan">Coming 2026</span>
+        </div>
+        <CollectionPlayers />
+      </section>
+
+      {/* PRISM LINK */}
+      <section id="link" style={{ background: "#1D1C18", color: "#F8F8F5", marginTop: 80, padding: "104px 48px" }}>
+        <div style={{ maxWidth: 1180, margin: "0 auto" }}>
+          <div style={{ textAlign: "center", maxWidth: 720, margin: "0 auto" }}>
+            <div style={{ fontFamily: mono, fontSize: 12.5, letterSpacing: "0.22em", textTransform: "uppercase", color: "#3DA9FC", marginBottom: 22 }}>
+              The differentiator · Prism Link
+            </div>
+            <h2 style={{ fontSize: 56, fontWeight: 600, letterSpacing: "-0.04em", lineHeight: 1, margin: 0, color: "#F4EEE1" }}>
+              Every plugin
+              <br />
+              moves together.
+            </h2>
+            <p style={{ fontSize: 18, lineHeight: 1.65, color: "#b8b6ac", margin: "26px 0 0" }}>
+              Prism Link is a shared modulation lane between your Prism plugins. Set a movement once — an
+              envelope, an LFO, the groove — and the rest of the rack follows it in real time. No sidechain, no
+              routing, and no audio between tracks.
+            </p>
           </div>
-          <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-            <a href="#waitlist" className="rounded-xl bg-prism-cyan px-8 py-3.5 text-[15px] font-bold text-[#14152E] transition hover:bg-prism-cyan/85">
-              Join the Waitlist
-            </a>
-            <Link href="/collections/dragonbreath" className="rounded-xl border border-white/[0.08] px-8 py-3.5 text-[15px] text-slate-400 transition hover:border-white/15 hover:text-white">
-              Explore Collections
-            </Link>
+
+          {/* diagram */}
+          <div style={{ maxWidth: 960, margin: "64px auto 0" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(5,1fr)", gap: 16 }}>
+              {nodes.map((nd) => (
+                <div key={nd.num} style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                  <div style={{ width: "100%", background: "#1e1d18", border: "1px solid #34322a", borderRadius: 9, padding: "16px 14px", textAlign: "center" }}>
+                    <div style={{ fontFamily: mono, fontSize: 10, letterSpacing: "0.1em", color: "#6f6d63", marginBottom: 10 }}>{nd.num}</div>
+                    <svg viewBox="0 0 84 30" width="100%" height="24" preserveAspectRatio="none">
+                      <g fill="#3DA9FC" opacity="0.85">
+                        <rect x="4" y="10" width="4" height="10" rx="2" />
+                        <rect x="14" y="4" width="4" height="22" rx="2" />
+                        <rect x="24" y="13" width="4" height="4" rx="2" />
+                        <rect x="34" y="7" width="4" height="16" rx="2" />
+                        <rect x="44" y="2" width="4" height="26" rx="2" />
+                        <rect x="54" y="11" width="4" height="8" rx="2" />
+                        <rect x="64" y="6" width="4" height="18" rx="2" />
+                        <rect x="74" y="12" width="4" height="6" rx="2" />
+                      </g>
+                    </svg>
+                    <div style={{ fontSize: 15, fontWeight: 600, letterSpacing: "-0.01em", marginTop: 12 }}>{nd.name}</div>
+                    <div style={{ fontFamily: mono, fontSize: 9, letterSpacing: "0.1em", textTransform: "uppercase", marginTop: 6, color: nd.roleColor }}>
+                      {nd.role}
+                    </div>
+                  </div>
+                  <div style={{ width: 1, height: 34, background: "linear-gradient(#3DA9FC, rgba(61,169,252,0.15))" }} />
+                </div>
+              ))}
+            </div>
+            <div style={{ position: "relative", height: 56, border: "1px solid rgba(61,169,252,0.35)", background: "#191812", borderRadius: 10, display: "flex", alignItems: "center", padding: "0 22px", overflow: "hidden" }}>
+              <span style={{ fontFamily: mono, fontSize: 12, letterSpacing: "0.14em", textTransform: "uppercase", color: "#3DA9FC" }}>
+                ◈ Prism Link — shared modulation bus
+              </span>
+              <span style={{ marginLeft: "auto", fontFamily: mono, fontSize: 11, letterSpacing: "0.08em", color: "#6f6d63" }}>
+                control data · no audio
+              </span>
+              {[0, 1, 2].map((i) => (
+                <div
+                  key={i}
+                  style={{
+                    position: "absolute",
+                    top: "50%",
+                    left: 20,
+                    width: 9,
+                    height: 9,
+                    marginTop: -4.5,
+                    borderRadius: "50%",
+                    background: i === 1 ? "#E9D77A" : "#3DA9FC",
+                    boxShadow: `0 0 10px ${i === 1 ? "#E9D77A" : "#3DA9FC"}`,
+                    animation: "busPulse 3s linear infinite",
+                    animationDelay: `${i}s`,
+                  }}
+                />
+              ))}
+            </div>
           </div>
-          <div className="mx-auto mt-20 flex max-w-lg justify-between">
-            {[
-              { value: `${totalPluginCount}`, label: 'Plugins' },
-              { value: `${collections.length}`, label: 'Collections' },
-              { value: 'VST3+AU', label: 'Formats' },
-              { value: 'macOS', label: 'Platform' },
-            ].map((s) => (
-              <div key={s.label} className="text-center">
-                <div className="text-xl font-bold text-slate-200">{s.value}</div>
-                <div className="mt-1 text-[11px] uppercase tracking-[0.15em] text-slate-400">{s.label}</div>
+
+          {/* three points */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 40, maxWidth: 940, margin: "72px auto 0" }}>
+            {linkPoints.map((pt) => (
+              <div key={pt.n}>
+                <div style={{ fontFamily: mono, fontSize: 11, letterSpacing: "0.1em", color: "#3DA9FC", marginBottom: 14 }}>{pt.n}</div>
+                <h4 style={{ fontSize: 20, fontWeight: 600, letterSpacing: "-0.015em", margin: "0 0 10px" }}>{pt.title}</h4>
+                <p style={{ fontSize: 14.5, lineHeight: 1.6, color: "#a6a49a", margin: 0 }}>{pt.body}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* INFINITE MARQUEE */}
-      <InfiniteMarquee />
-
-      {/* EFFECTS & SYNTHS COLLECTIONS */}
-      <section className="py-28">
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-white">Effects & Synthesis</h2>
-            <p className="mt-3 text-base text-slate-400">Analog-inspired processing and celestial synthesis engines.</p>
-          </div>
-          <div className="grid gap-6 sm:grid-cols-3">
-            {effectsSynthsCollections.map((col) => {
-              const stripImages = col.plugins
-                .slice(0, 3)
-                .map((p) => ({ id: p.id, name: p.name, src: getPluginImage(p.id) }))
-                .filter((img) => img.src);
-              return (
-                <Link key={col.id} href={`/collections/${col.id}`} className="group relative rounded-2xl border border-white/[0.08] bg-[#14152E] overflow-hidden transition hover:border-prism-violet/20">
-                  <div className="relative h-36 overflow-hidden flex">
-                    {stripImages.map((img, idx) => (
-                      <div key={img.id} className="relative flex-1 overflow-hidden">
-                        <Image src={img.src!} alt={img.name} fill className="object-cover opacity-50 transition-all duration-500 group-hover:opacity-70 group-hover:scale-105" sizes="(max-width: 640px) 33vw, 17vw" />
-                        {idx < stripImages.length - 1 && <div className="absolute right-0 inset-y-0 w-px bg-white/[0.06] z-10" />}
-                      </div>
-                    ))}
-                    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#14152E]" />
-                    <div className={`absolute inset-0 bg-gradient-to-br ${col.gradient} opacity-[0.08]`} />
-                  </div>
-                  <div className="p-10 pt-4">
-                    <div className={`mb-5 h-1 w-14 rounded-full bg-gradient-to-r ${col.gradient}`} />
-                    <h3 className={`text-2xl font-bold ${col.textGradientClass}`}>{col.name}</h3>
-                    <p className="mt-1 text-sm text-slate-400">{col.subtitle}</p>
-                    <p className="mt-4 text-[15px] leading-relaxed text-slate-400">{col.description}</p>
-                    <div className="mt-8 flex items-center justify-between">
-                      <span className="rounded-full bg-prism-cyan/[0.08] px-3 py-1 text-xs font-medium text-prism-cyan/80">Coming Soon</span>
-                      <span className="text-xs text-slate-400">{col.plugins.length} plugins</span>
-                    </div>
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
+      {/* PRICING */}
+      <section id="pricing" style={{ maxWidth: 1180, margin: "0 auto", padding: "104px 48px" }}>
+        <div style={{ textAlign: "center", marginBottom: 52 }}>
+          <div style={{ fontFamily: mono, fontSize: 12.5, letterSpacing: "0.22em", textTransform: "uppercase", color: "#8a897d", marginBottom: 18 }}>Pricing</div>
+          <h2 style={{ fontSize: 52, fontWeight: 600, letterSpacing: "-0.04em", lineHeight: 1, margin: 0 }}>Own the whole spectrum.</h2>
         </div>
-      </section>
-
-      {/* WORLD INSTRUMENT COLLECTIONS */}
-      <section className="py-28 border-t border-white/[0.04]">
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-white">World Instruments</h2>
-            <p className="mt-3 text-base text-slate-400 max-w-2xl mx-auto">
-              Authentic virtual instruments from musical traditions spanning six continents &mdash; each with culturally accurate articulations, traditional tuning systems, and expressive controls.
-            </p>
-          </div>
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {worldCollections.map((col) => {
-              const firstPlugin = col.plugins[0];
-              const firstImage = firstPlugin ? getPluginImage(firstPlugin.id) : undefined;
-              return (
-                <Link key={col.id} href={`/collections/${col.id}`} className="group relative rounded-2xl border border-white/[0.08] bg-[#14152E] overflow-hidden transition hover:border-white/[0.15]">
-                  <div className={`relative h-32 overflow-hidden ${!firstImage ? `bg-gradient-to-br ${col.gradient}` : 'bg-black'}`}>
-                    {firstImage ? (
-                      <Image src={firstImage} alt={col.name} fill className="object-cover opacity-50 transition-all duration-500 group-hover:opacity-70 group-hover:scale-105" sizes="(max-width: 640px) 50vw, 25vw" />
-                    ) : (
-                      <div className={`absolute inset-0 bg-gradient-to-br ${col.gradient} opacity-30`} />
-                    )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#14152E] via-transparent to-transparent" />
-                  </div>
-                  <div className="p-6 pt-3">
-                    <div className={`mb-3 h-1 w-10 rounded-full bg-gradient-to-r ${col.gradient}`} />
-                    <h3 className={`text-lg font-bold ${col.textGradientClass}`}>{col.name}</h3>
-                    <p className="mt-0.5 text-xs text-slate-400">{col.subtitle}</p>
-                    <div className="mt-4 flex items-center justify-between">
-                      <span className="rounded-full bg-prism-cyan/[0.08] px-2.5 py-0.5 text-[11px] font-medium text-prism-cyan/80">Coming Soon</span>
-                      <span className="text-[11px] text-slate-400">{col.plugins.length} plugins</span>
-                    </div>
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* FEATURED PLUGINS */}
-      <section className="py-24 border-t border-white/[0.04]">
-        <div className="mx-auto max-w-7xl px-6">
-          <h2 className="text-2xl font-bold text-white mb-2">Featured Plugins</h2>
-          <p className="text-sm text-slate-400 mb-10">A highlight from each collection.</p>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {collections.slice(0, 8).map((col) => {
-              const p = col.plugins[0];
-              const pImage = getPluginImage(p.id);
-              return (
-                <Link key={p.id} href={`/plugins/${p.id}`} className="group">
-                  <div className="rounded-2xl border border-white/[0.08] bg-[#14152E] overflow-hidden transition hover:border-prism-violet/20">
-                    <div className={`relative h-40 overflow-hidden ${!pImage ? `bg-gradient-to-br ${p.gradient}` : 'bg-black'}`}>
-                      {pImage ? (
-                        <Image src={pImage} alt={p.name} fill className="object-cover transition-transform duration-500 group-hover:scale-105" sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw" />
-                      ) : null}
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#14152E] via-transparent to-transparent" />
-                      <div className="absolute bottom-3 left-4">
-                        <span className="rounded-full bg-black/30 px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-white/70 backdrop-blur-sm">{col.name}</span>
-                      </div>
-                    </div>
-                    <div className="p-5">
-                      <h3 className="text-[15px] font-semibold text-slate-200">{p.name}</h3>
-                      <p className="mt-0.5 text-sm" style={{ color: p.accentColor }}>{p.tagline}</p>
-                      <div className="mt-4 flex items-center justify-between">
-                        <span className="rounded-full bg-prism-cyan/[0.08] px-2.5 py-0.5 text-[11px] font-medium text-prism-cyan/80">Coming Soon</span>
-                        <span className="text-xs text-slate-400 transition group-hover:text-slate-300">View &rarr;</span>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* PLUGIN SPOTLIGHT */}
-      <section className="py-24 border-t border-white/[0.04]">
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="grid gap-12 lg:grid-cols-2 items-center">
-            <div className="relative group">
-              <div className="absolute -inset-4 rounded-3xl bg-gradient-to-br from-orange-600/20 via-red-600/10 to-amber-500/20 blur-2xl opacity-40 group-hover:opacity-60 transition-opacity duration-700" />
-              <div className="relative overflow-hidden rounded-2xl border border-white/[0.08]">
-                <div className="relative aspect-square">
-                  <Image src={getPluginImage('dragonbreath-pedal')!} alt="Dragonbreath Pedal" fill className="object-cover transition-transform duration-700 group-hover:scale-[1.03]" sizes="(max-width: 1024px) 100vw, 50vw" />
+        <div style={{ maxWidth: 560, margin: "0 auto", background: "#fff", border: "1px solid #e3dfd5", borderRadius: 12, overflow: "hidden" }}>
+          <div style={{ padding: "40px 40px 32px", position: "relative", overflow: "hidden" }}>
+            <div style={{ fontFamily: mono, fontSize: 12, letterSpacing: "0.1em", textTransform: "uppercase", color: "#3DA9FC", marginBottom: 14 }}>The Collection</div>
+            <div style={{ display: "flex", alignItems: "flex-end", gap: 12 }}>
+              <span style={{ fontSize: 64, fontWeight: 600, letterSpacing: "-0.04em", lineHeight: 0.9 }}>${COLLECTION_PRICE}</span>
+              <span style={{ fontFamily: mono, fontSize: 12.5, color: "#8a897d", paddingBottom: 10 }}>all five instruments + Prism Link</span>
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 12, margin: "30px 0 32px" }}>
+              {[
+                "Lunar, Seismic, Dragon, Stellar & Comet — VST3, AU, AAX",
+                "Prism Link shared modulation bus",
+                "Free updates, forever",
+                "30-day money-back guarantee",
+              ].map((line) => (
+                <div key={line} style={{ display: "flex", gap: 12, alignItems: "center", fontSize: 15, color: "#3a3a33" }}>
+                  <span style={{ color: "#3DA9FC" }}>✦</span> {line}
                 </div>
-              </div>
+              ))}
             </div>
-            <div>
-              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-orange-500/20 bg-orange-500/[0.05] px-4 py-1.5">
-                <div className="h-1.5 w-1.5 rounded-full bg-orange-500" />
-                <span className="text-xs font-semibold uppercase tracking-[0.15em] text-orange-400">Plugin Spotlight</span>
-              </div>
-              <h2 className="text-[clamp(2rem,4vw,3rem)] font-black tracking-tight leading-[1.1]">
-                <span className="text-gradient-dragon">Dragonbreath</span>
-              </h2>
-              <p className="mt-2 text-lg text-white/70 font-medium">Where Clean Signal Goes to Evolve</p>
-              <p className="mt-6 text-[16px] leading-[1.8] text-slate-400">
-                Four-stage multi-effect engine with cascading saturation, tempo-synced modulation, filtered delay, and convolution reverb in a single signal path. Parallel dry/wet routing with per-stage gain staging &mdash; the kind of architecture you&apos;d build with a rack of outboard, collapsed into one plugin.
-              </p>
-              <div className="mt-8 flex flex-wrap gap-2">
-                {['Multi-effect chain', 'Parallel routing', 'Analog saturation', 'Preset morphing'].map((f) => (
-                  <span key={f} className="rounded-full border border-orange-500/15 bg-orange-500/[0.05] px-3 py-1 text-xs text-orange-300/80">{f}</span>
-                ))}
-              </div>
-              <div className="mt-10 flex items-center gap-6">
-                <Link href="/plugins/dragonbreath-pedal" className="rounded-xl bg-gradient-to-r from-orange-600 to-red-600 px-7 py-3 text-[15px] font-bold text-white transition hover:opacity-90">
-                  View Dragonbreath
-                </Link>
-                <span className="rounded-full bg-orange-500/[0.1] px-4 py-1.5 text-sm font-medium text-orange-400">Coming Soon</span>
-              </div>
-            </div>
+            <Link href="#" style={{ display: "block", textAlign: "center", fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, fontSize: 13.5, letterSpacing: "0.05em", background: "#1D1C18", color: "#F8F8F5", padding: 15, borderRadius: 4 }}>
+              Get the collection
+            </Link>
+          </div>
+          <div style={{ borderTop: "1px solid #e3dfd5", padding: "18px 40px", fontFamily: mono, fontSize: 12, color: "#8a897d", textAlign: "center", background: "#F8F8F5" }}>
+            Prefer to start small? Each plugin is <span style={{ color: "#1D1C18" }}>${SINGLE_PRICE}</span> on its own.
           </div>
         </div>
       </section>
 
-      {/* WAITLIST SIGNUP */}
-      <section id="waitlist" className="py-32">
-        <div className="relative mx-auto max-w-4xl px-6 text-center">
-          <div className="pointer-events-none absolute left-1/2 top-1/2 h-[400px] w-[400px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-prism-violet/[0.05] blur-[120px]" />
-          <div className="relative">
-            <h2 className="text-[clamp(2rem,5vw,3.5rem)] font-black tracking-tight leading-tight">
-              The Signal Starts<br />
-              <span className="text-gradient-prism">Here.</span>
-            </h2>
-            <p className="mt-5 text-base text-slate-400">Be the first to know when our plugins launch.</p>
-            <div className="mt-10 mx-auto max-w-md">
-              {/* Placeholder waitlist form — replace with Mailchimp/ConvertKit embed */}
-              <form action="mailto:hello@prismaudiolabs.co" method="GET" className="flex gap-3">
-                <input
-                  type="email"
-                  placeholder="your@email.com"
-                  required
-                  className="flex-1 rounded-xl border border-white/[0.08] bg-white/[0.03] px-5 py-3.5 text-[15px] text-white placeholder-slate-500 outline-none transition focus:border-prism-cyan/30 focus:bg-white/[0.05]"
-                />
-                <button type="submit" className="shrink-0 rounded-xl bg-prism-cyan px-7 py-3.5 text-[15px] font-bold text-[#14152E] transition hover:bg-prism-cyan/85">
-                  Notify Me
-                </button>
-              </form>
-              <p className="mt-4 text-sm text-slate-400">No spam. Just a single email when we launch.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-    </>
+      <SiteFooter variant="full" />
+    </div>
   );
 }
