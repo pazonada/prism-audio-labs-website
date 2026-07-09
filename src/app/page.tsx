@@ -35,7 +35,7 @@ export default function HomePage() {
 
   return (
     <div style={{ fontFamily: "'Space Grotesk', sans-serif", color: "#1D1C18", background: "#F8F8F5" }}>
-      <SiteNav theme="light" />
+      <SiteNav theme="light" home />
 
       {/* HERO */}
       <header style={{ position: "relative", zIndex: 0, overflow: "hidden", padding: "96px 48px 20px", maxWidth: 1180, margin: "0 auto" }}>
@@ -62,12 +62,12 @@ export default function HomePage() {
           Plugins that move together.
         </h1>
         <p style={{ fontSize: 19, lineHeight: 1.6, color: "#4a4940", maxWidth: 540, margin: "30px 0 38px" }}>
-          Prism Audio Labs offer a collection of instruments built around a single idea: set a motion once, and
-          the whole rack responds. New collections are released on a regular basis.
+          Prism Audio Labs make instruments built around a single idea: set a motion once, and the whole rack
+          responds. We release new plugins regularly — and every one works together through Prism Link.
         </p>
         <div style={{ display: "flex", gap: 14, alignItems: "center", flexWrap: "wrap" }}>
           <Link href="#pricing" style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, fontSize: 13, letterSpacing: "0.05em", background: "#1D1C18", color: "#F8F8F5", padding: "14px 28px", borderRadius: 3 }}>
-            Get the collection — ${COLLECTION_PRICE}
+            Get this release — ${COLLECTION_PRICE}
           </Link>
           <Link href="#link" style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, fontSize: 13, letterSpacing: "0.05em", padding: "14px 24px", border: "1px solid #1D1C18", borderRadius: 3 }}>
             How Prism Link works →
@@ -78,11 +78,11 @@ export default function HomePage() {
       <WaveDivider />
 
       {/* COLLECTION */}
-      <section id="collection" style={{ maxWidth: 1180, margin: "0 auto", padding: "96px 48px 40px" }}>
+      <section id="plugins" style={{ maxWidth: 1180, margin: "0 auto", padding: "96px 48px 40px" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexWrap: "wrap", gap: 24, marginBottom: 48 }}>
           <div>
             <div style={{ fontFamily: mono, fontSize: 12.5, letterSpacing: "0.22em", textTransform: "uppercase", color: "#8a897d", marginBottom: 18 }}>
-              The collection / 05
+              This release / 05
             </div>
             <h2 style={{ fontSize: 52, fontWeight: 600, letterSpacing: "-0.04em", lineHeight: 1, margin: 0 }}>
               Five tools launch
@@ -193,7 +193,7 @@ export default function HomePage() {
         </div>
         <div style={{ maxWidth: 560, margin: "0 auto", background: "#fff", border: "1px solid #e3dfd5", borderRadius: 12, overflow: "hidden" }}>
           <div style={{ padding: "40px 40px 32px", position: "relative", overflow: "hidden" }}>
-            <div style={{ fontFamily: mono, fontSize: 12, letterSpacing: "0.1em", textTransform: "uppercase", color: "#3DA9FC", marginBottom: 14 }}>The Collection</div>
+            <div style={{ fontFamily: mono, fontSize: 12, letterSpacing: "0.1em", textTransform: "uppercase", color: "#3DA9FC", marginBottom: 14 }}>This release</div>
             <div style={{ display: "flex", alignItems: "flex-end", gap: 12 }}>
               <span style={{ fontSize: 64, fontWeight: 600, letterSpacing: "-0.04em", lineHeight: 0.9 }}>${COLLECTION_PRICE}</span>
               <span style={{ fontFamily: mono, fontSize: 12.5, color: "#8a897d", paddingBottom: 10 }}>all five instruments + Prism Link</span>
@@ -211,7 +211,7 @@ export default function HomePage() {
               ))}
             </div>
             <Link href="#" style={{ display: "block", textAlign: "center", fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, fontSize: 13.5, letterSpacing: "0.05em", background: "#1D1C18", color: "#F8F8F5", padding: 15, borderRadius: 4 }}>
-              Get the collection
+              Get this release
             </Link>
           </div>
           <div style={{ borderTop: "1px solid #e3dfd5", padding: "18px 40px", fontFamily: mono, fontSize: 12, color: "#8a897d", textAlign: "center", background: "#F8F8F5" }}>

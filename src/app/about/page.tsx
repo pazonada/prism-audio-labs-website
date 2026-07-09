@@ -1,193 +1,116 @@
-import type { Metadata } from 'next';
-import Link from 'next/link';
-import Image from 'next/image';
-import { pluginImageMap } from '@/data/plugins';
+import type { Metadata } from "next";
+import { SiteNav } from "@/components/prism/SiteNav";
+import { SiteFooter } from "@/components/prism/SiteFooter";
+import { ImageSlot } from "@/components/prism/ImageSlot";
+import { AboutContactForm } from "@/components/prism/AboutContactForm";
+
+const mono = "'IBM Plex Mono', monospace";
 
 export const metadata: Metadata = {
-  title: 'About',
+  title: "About",
   description:
-    'Prism Audio Labs crafts professional audio plugins at the intersection of analog circuitry, spectral synthesis, and world musical heritage. Coming 2026.',
-  openGraph: {
-    title: 'About — Prism Audio Labs',
-    description:
-      'Analog soul, digital precision. 74 instruments and effects across 14 collections, coming 2026.',
-  },
+    "Prism Audio Labs was born from a love of analog gear and a belief that digital tools should feel just as alive — a small team led by a seasoned audio engineer and producer.",
 };
 
-// 12 best MidJourney images for gallery
-const galleryPlugins = [
-  { id: 'dragonbreath-pedal', name: 'Dragonbreath' },
-  { id: 'stellar-saw', name: 'Stellar Saw' },
-  { id: 'nebula-mfx', name: 'Nebula MFX' },
-  { id: 'prism-tabla', name: 'Tabla' },
-  { id: 'glacier-plate', name: 'Glacier Plate' },
-  { id: 'comet-poly', name: 'Comet Poly' },
-  { id: 'magma-hard-synth', name: 'Magma Hard Synth' },
-  { id: 'prism-oud', name: 'Oud' },
-  { id: 'astral-keys', name: 'Astral Keys' },
-  { id: 'aurora-string-pad', name: 'Aurora String Pad' },
-  { id: 'prism-kora', name: 'Kora' },
-  { id: 'telluric-analog-synth', name: 'Telluric Analog Synth' },
+const minimum = [
+  "macOS 11 (Big Sur) or later",
+  "Intel or Apple Silicon",
+  "8 GB RAM",
+  "500 MB disk space",
+  "VST3 or AU compatible DAW",
 ];
+const testedWith = ["Logic Pro", "Ableton Live", "REAPER", "GarageBand", "Pro Tools (VST3)"];
+
+function ReqItem({ children, blue }: { children: React.ReactNode; blue?: boolean }) {
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 16, fontSize: 18, color: "#3a3a33" }}>
+      <span style={{ flex: "none", width: 8, height: 8, borderRadius: "50%", background: blue ? "#3DA9FC" : "#b3b1a5" }} />
+      {children}
+    </div>
+  );
+}
 
 export default function AboutPage() {
   return (
-    <div className="pt-28">
-      {/* Hero */}
-      <section className="relative py-20">
-        <div className="pointer-events-none absolute inset-0">
-          <div className="absolute left-1/2 top-1/3 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-prism-violet/[0.06] blur-[120px]" />
-        </div>
-        <div className="relative mx-auto max-w-7xl px-6">
-          <div className="flex items-center gap-2 text-[14px] text-white/65 mb-8">
-            <Link href="/" className="transition hover:text-white/65">Home</Link>
-            <span>/</span>
-            <span className="text-white/65">About</span>
-          </div>
+    <div style={{ fontFamily: "'Space Grotesk', sans-serif", color: "#1D1C18", background: "#F8F8F5" }}>
+      <SiteNav theme="light" />
 
-          <div className="max-w-4xl">
-            <div className="mb-4 flex items-center gap-3">
-              <div className="h-1.5 w-14 rounded-full animated-border" />
-              <span className="text-[12px] font-semibold uppercase tracking-[0.2em] text-white/65">About</span>
-            </div>
-            <h1 className="text-[clamp(2.5rem,5vw,4.5rem)] font-black tracking-tight text-white leading-[1.05]">
-              Analog Soul.<br />
-              <span className="text-gradient-prism">Digital Precision.</span>
-            </h1>
-          </div>
+      {/* HEADER */}
+      <header style={{ position: "relative", overflow: "hidden", zIndex: 0, maxWidth: 1180, margin: "0 auto", padding: "88px 48px 56px" }}>
+        <svg
+          width="340"
+          height="260"
+          viewBox="0 0 340 260"
+          fill="none"
+          style={{
+            position: "absolute",
+            right: 0,
+            top: 24,
+            zIndex: -1,
+            pointerEvents: "none",
+            WebkitMaskImage: "linear-gradient(215deg,#000,transparent 72%)",
+            maskImage: "linear-gradient(215deg,#000,transparent 72%)",
+          }}
+        >
+          <defs>
+            <pattern id="aboutDots" width="24" height="24" patternUnits="userSpaceOnUse">
+              <circle cx="2.2" cy="2.2" r="2.2" fill="#3DA9FC" />
+            </pattern>
+          </defs>
+          <rect width="340" height="260" fill="url(#aboutDots)" />
+        </svg>
+        <h1 style={{ fontSize: 80, fontWeight: 600, letterSpacing: "-0.045em", lineHeight: 0.94, margin: 0, maxWidth: 900 }}>
+          Analog soul with digital precision.
+        </h1>
+        <p style={{ fontSize: 19, lineHeight: 1.65, color: "#4a4940", maxWidth: 620, margin: "30px 0 0" }}>
+          Prism Audio Labs was born from a deep love of analog gear and a belief that digital tools should feel just as
+          alive. Every plugin in our collection is meticulously crafted to capture the warmth, character, and
+          unpredictability of real hardware. We&apos;re a small team, led by a seasoned audio engineer and music producer.
+        </p>
+      </header>
+
+      {/* IMAGE */}
+      <section style={{ maxWidth: 1180, margin: "0 auto", padding: "24px 48px 8px" }}>
+        <div style={{ position: "relative", border: "1px solid #e3dfd5", borderRadius: 16, overflow: "hidden", aspectRatio: "16 / 7", background: "#efece3" }}>
+          <ImageSlot label="Drop a studio / team photo" />
         </div>
       </section>
 
-      {/* Story */}
-      <section className="py-16">
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="grid gap-16 lg:grid-cols-2">
-            <div className="max-w-xl">
-              <p className="text-[17px] leading-[1.9] text-white/65">
-                Prism Audio Labs was born from a deep love of analog gear and a belief that digital tools should feel just as alive. Every plugin in our collection is meticulously crafted to capture the warmth, character, and unpredictability of real hardware.
-              </p>
-              <p className="mt-6 text-[17px] leading-[1.9] text-white/65">
-                From the fire-breathing Dragonbreath effects pedals to the ancient world instruments of the Prism World collection, we bridge the gap between tradition and technology. Our plugins don&apos;t just process sound — they inspire it.
-              </p>
-              <p className="mt-6 text-[17px] leading-[1.9] text-white/65">
-                We believe the best tools disappear into the creative process. That&apos;s why every parameter, every knob, every preset has been tuned not just for technical accuracy, but for musical feel. When you reach for a Prism plugin, you should feel like you&apos;re reaching for a trusted piece of gear.
-              </p>
+      {/* SYSTEM REQUIREMENTS */}
+      <section style={{ maxWidth: 1180, margin: "0 auto", padding: "88px 48px 24px" }}>
+        <div style={{ fontFamily: mono, fontSize: 12.5, letterSpacing: "0.22em", textTransform: "uppercase", color: "#8a897d", marginBottom: 18 }}>System requirements</div>
+        <h2 style={{ fontSize: 44, fontWeight: 600, letterSpacing: "-0.04em", lineHeight: 1, margin: "0 0 44px" }}>Here&apos;s what you need to run it.</h2>
+        <div style={{ background: "#fff", border: "1px solid #e3dfd5", borderRadius: 16, padding: "52px 56px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 56 }}>
+          <div>
+            <div style={{ fontFamily: mono, fontSize: 12, letterSpacing: "0.14em", textTransform: "uppercase", color: "#1D1C18", marginBottom: 28 }}>Minimum</div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
+              {minimum.map((m) => <ReqItem key={m}>{m}</ReqItem>)}
             </div>
-
-            <div className="grid grid-cols-2 gap-5">
-              <div className="rounded-2xl border border-orange-500/10 bg-gradient-to-br from-orange-500/[0.04] to-transparent p-7">
-                <div className="text-[28px] font-bold text-gradient-dragon">01</div>
-                <h4 className="mt-3 text-[16px] font-semibold text-white/85">Analog Inspired</h4>
-                <p className="mt-2 text-[14px] leading-relaxed text-white/65">Every algorithm starts with real hardware analysis and listening tests</p>
-              </div>
-              <div className="rounded-2xl border border-purple-500/10 bg-gradient-to-br from-purple-500/[0.04] to-transparent p-7">
-                <div className="text-[28px] font-bold text-gradient-cosmos">02</div>
-                <h4 className="mt-3 text-[16px] font-semibold text-white/85">Celestial Design</h4>
-                <p className="mt-2 text-[14px] leading-relaxed text-white/65">Interfaces inspired by cosmic phenomena and natural beauty</p>
-              </div>
-              <div className="rounded-2xl border border-amber-500/10 bg-gradient-to-br from-amber-500/[0.04] to-transparent p-7">
-                <div className="text-[28px] font-bold text-gradient-world">03</div>
-                <h4 className="mt-3 text-[16px] font-semibold text-white/85">Cultural Respect</h4>
-                <p className="mt-2 text-[14px] leading-relaxed text-white/65">World instruments honoring centuries of musical tradition and heritage</p>
-              </div>
-              <div className="rounded-2xl border border-cyan-500/10 bg-gradient-to-br from-cyan-500/[0.04] to-transparent p-7">
-                <div className="text-[28px] font-bold text-gradient-elements">04</div>
-                <h4 className="mt-3 text-[16px] font-semibold text-white/85">Elemental Force</h4>
-                <p className="mt-2 text-[14px] leading-relaxed text-white/65">Harnessing nature&apos;s primal energy — air, fire, water, earth — in sound</p>
-              </div>
+          </div>
+          <div>
+            <div style={{ fontFamily: mono, fontSize: 12, letterSpacing: "0.14em", textTransform: "uppercase", color: "#1D1C18", marginBottom: 28 }}>Tested with</div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
+              {testedWith.map((t) => <ReqItem key={t} blue>{t}</ReqItem>)}
             </div>
           </div>
         </div>
       </section>
 
-      {/* Our Plugins Gallery */}
-      <section className="py-20 border-t border-white/[0.04]">
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="mb-12">
-            <h2 className="text-[28px] font-bold text-white/90">Our Plugins</h2>
-            <p className="mt-2 text-[16px] text-white/55">Crafted interfaces, designed to inspire.</p>
+      {/* CONTACT */}
+      <section id="contact" style={{ maxWidth: 1180, margin: "0 auto", padding: "88px 48px 100px" }}>
+        <div style={{ background: "#1D1C18", color: "#F1EFE8", borderRadius: 20, padding: 64, display: "grid", gridTemplateColumns: "0.85fr 1.15fr", gap: 64, alignItems: "start" }}>
+          <div>
+            <div style={{ fontFamily: mono, fontSize: 12.5, letterSpacing: "0.22em", textTransform: "uppercase", color: "#3DA9FC", marginBottom: 22 }}>Get in touch</div>
+            <h2 style={{ fontSize: 40, fontWeight: 600, letterSpacing: "-0.035em", lineHeight: 1.02, margin: 0, color: "#F4EEE1" }}>Questions, support, or press.</h2>
+            <p style={{ fontSize: 15.5, lineHeight: 1.65, color: "#a6a49a", margin: "22px 0 0" }}>
+              Tell us what you&apos;re working on and we&apos;ll get back within two business days.
+            </p>
           </div>
-
-          {/* Staggered masonry-style grid */}
-          <div className="columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4">
-            {galleryPlugins.map((plugin, idx) => {
-              const src = pluginImageMap[plugin.id];
-              if (!src) return null;
-              // Alternate between taller and shorter aspect ratios for staggered feel
-              const isTall = idx % 3 === 0;
-              return (
-                <Link
-                  key={plugin.id}
-                  href={`/plugins/${plugin.id}`}
-                  className="group block break-inside-avoid overflow-hidden rounded-xl border border-white/[0.06] bg-[#14152E] transition hover:border-prism-violet/20"
-                >
-                  <div className={`relative ${isTall ? 'aspect-[3/4]' : 'aspect-square'} overflow-hidden`}>
-                    <Image
-                      src={src}
-                      alt={plugin.name}
-                      fill
-                      className="object-cover transition-transform duration-500 group-hover:scale-105"
-                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    <div className="absolute bottom-0 left-0 right-0 p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                      <p className="text-sm font-semibold text-white">{plugin.name}</p>
-                      <p className="text-xs text-white/60">View Plugin</p>
-                    </div>
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
+          <AboutContactForm />
         </div>
       </section>
 
-      {/* System Requirements */}
-      <section className="py-20">
-        <div className="mx-auto max-w-7xl px-6">
-          <h2 className="mb-10 text-[28px] font-bold text-white/90">System Requirements</h2>
-          <div className="mx-auto max-w-4xl rounded-2xl border border-white/[0.06] bg-[#14152E] p-10">
-            <div className="grid gap-10 md:grid-cols-2">
-              <div>
-                <h4 className="mb-5 text-[12px] font-semibold uppercase tracking-[0.15em] text-prism-cyan/60">Minimum</h4>
-                <ul className="space-y-4 text-[15px] text-white/60">
-                  <li className="flex items-center gap-3"><span className="h-1.5 w-1.5 rounded-full bg-white/20" /> macOS 11 (Big Sur) or later</li>
-                  <li className="flex items-center gap-3"><span className="h-1.5 w-1.5 rounded-full bg-white/20" /> Intel or Apple Silicon</li>
-                  <li className="flex items-center gap-3"><span className="h-1.5 w-1.5 rounded-full bg-white/20" /> 8 GB RAM</li>
-                  <li className="flex items-center gap-3"><span className="h-1.5 w-1.5 rounded-full bg-white/20" /> 500 MB disk space</li>
-                  <li className="flex items-center gap-3"><span className="h-1.5 w-1.5 rounded-full bg-white/20" /> VST3 or AU compatible DAW</li>
-                </ul>
-              </div>
-              <div>
-                <h4 className="mb-5 text-[12px] font-semibold uppercase tracking-[0.15em] text-prism-cyan/60">Tested With</h4>
-                <ul className="space-y-4 text-[15px] text-white/60">
-                  <li className="flex items-center gap-3"><span className="h-1.5 w-1.5 rounded-full bg-prism-cyan/40" /> Logic Pro</li>
-                  <li className="flex items-center gap-3"><span className="h-1.5 w-1.5 rounded-full bg-prism-cyan/40" /> Ableton Live</li>
-                  <li className="flex items-center gap-3"><span className="h-1.5 w-1.5 rounded-full bg-prism-cyan/40" /> REAPER</li>
-                  <li className="flex items-center gap-3"><span className="h-1.5 w-1.5 rounded-full bg-prism-cyan/40" /> GarageBand</li>
-                  <li className="flex items-center gap-3"><span className="h-1.5 w-1.5 rounded-full bg-prism-cyan/40" /> Pro Tools (VST3)</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Contact */}
-      <section className="py-20">
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="rounded-2xl border border-white/[0.06] bg-[#14152E] p-10 text-center">
-            <h2 className="text-[24px] font-bold text-white/90">Get in Touch</h2>
-            <p className="mt-3 text-[16px] text-white/55">Questions, feedback, or partnership inquiries — we&apos;d love to hear from you.</p>
-            <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
-              <span className="rounded-xl border border-white/[0.06] bg-white/[0.03] px-6 py-3 text-[15px] font-mono text-white/65">hello@prismaudiolabs.co</span>
-              <Link href="/#waitlist" className="rounded-xl bg-prism-cyan px-6 py-3 text-[14px] font-semibold text-[#14152E] transition hover:bg-prism-cyan/85">
-                Join the Waitlist
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
+      <SiteFooter variant="mini" />
     </div>
   );
 }

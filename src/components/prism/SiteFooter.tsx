@@ -45,7 +45,7 @@ export function SiteFooter({ variant = "full" }: { variant?: "full" | "mini" }) 
               color: "#a6a49a",
             }}
           >
-            <Link href="/#collection" style={{ color: "inherit" }}>Plugins</Link>
+            <Link href="/#plugins" style={{ color: "inherit" }}>Plugins</Link>
             <Link href="/#link" style={{ color: "inherit" }}>Prism Link</Link>
             <Link href="/pricing" style={{ color: "inherit" }}>Pricing</Link>
             <Link href="#" style={{ color: "inherit" }}>Support</Link>
@@ -114,8 +114,9 @@ export function SiteFooter({ variant = "full" }: { variant?: "full" | "mini" }) 
             <div style={{ display: "flex", flexDirection: "column", gap: 11 }}>
               <Link href="#link" style={colLink}>Prism Link</Link>
               <Link href="/pricing" style={colLink}>Pricing</Link>
-              <Link href="#" style={colLink}>About</Link>
-              <Link href="#" style={colLink}>Contact</Link>
+              <Link href="/learn" style={colLink}>Learn</Link>
+              <Link href="/about" style={colLink}>About</Link>
+              <Link href="/about#contact" style={colLink}>Contact</Link>
             </div>
           </div>
           <div>

@@ -38,3 +38,16 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   from { clip-path: inset(0 100% 0 0); }
   to   { clip-path: inset(0 0 0 0); }
 }
+/* Wider bus travel + vertical drop, used on the Prism Link page */
+@keyframes busPulseWide {
+  0%   { transform: translateX(-14px); opacity: 0; }
+  8%   { opacity: 1; }
+  92%  { opacity: 1; }
+  100% { transform: translateX(880px); opacity: 0; }
+}
+@keyframes dropPulse {
+  0%   { transform: translateY(-8px); opacity: 0; }
+  20%  { opacity: 1; }
+  80%  { opacity: 1; }
+  100% { transform: translateY(34px); opacity: 0; }
+}

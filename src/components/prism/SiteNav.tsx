@@ -3,14 +3,21 @@ import { PrismMark, Wordmark } from "./PrismMark";
 
 const mono = "'IBM Plex Mono', monospace";
 
-export function SiteNav({ theme = "light" }: { theme?: "light" | "dark" }) {
+export function SiteNav({
+  theme = "light",
+  home = false,
+}: {
+  theme?: "light" | "dark";
+  home?: boolean;
+}) {
   const dark = theme === "dark";
-  const prefix = dark ? "/" : "";
+  // Homepage anchors are local on the homepage, but must be prefixed with "/"
+  // everywhere else so they jump back to the homepage section.
+  const prefix = home ? "" : "/";
   const links = [
-    { label: "Plugins", href: `${prefix}#collection` },
+    { label: "Plugins", href: `${prefix}#plugins` },
     { label: "Prism Link", href: `${prefix}#link` },
-    { label: "Pricing", href: "/pricing" },
-    { label: "About", href: `${prefix}#` },
+    { label: "Learn", href: "/learn" },
   ];
 
   return (
@@ -30,7 +37,7 @@ export function SiteNav({ theme = "light" }: { theme?: "light" | "dark" }) {
       }}
     >
       <Link
-        href={dark ? "/" : "#"}
+        href="/"
         style={{ display: "flex", alignItems: "center", gap: 12, color: dark ? "#F1EFE8" : "#1D1C18" }}
       >
         <PrismMark size={30} stroke={dark ? "#F1EFE8" : "#1D1C18"} />
@@ -56,7 +63,7 @@ export function SiteNav({ theme = "light" }: { theme?: "light" | "dark" }) {
       </div>
 
       <Link
-        href={dark ? "#buy" : "#pricing"}
+        href={dark ? "#buy" : `${prefix}#pricing`}
         style={{
           fontFamily: "'Space Grotesk', sans-serif",
           fontWeight: 600,
