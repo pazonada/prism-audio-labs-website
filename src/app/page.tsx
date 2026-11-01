@@ -3,36 +3,11 @@ import { SiteNav } from "@/components/prism/SiteNav";
 import { SiteFooter } from "@/components/prism/SiteFooter";
 import { CollectionPlayers } from "@/components/prism/CollectionPlayers";
 import { WaveDivider } from "@/components/prism/WaveDivider";
-import { plugins, COLLECTION_PRICE, SINGLE_PRICE } from "@/lib/prism-data";
+import { COLLECTION_PRICE, SINGLE_PRICE } from "@/lib/prism-data";
 
 const mono = "'IBM Plex Mono', monospace";
 
-const linkPoints = [
-  {
-    n: "01",
-    title: "Shape, not volume",
-    body: "Link moves filter, pitch, drive and space — not just the fader. The plugins are coupled, not ducked.",
-  },
-  {
-    n: "02",
-    title: "Zero setup",
-    body: "Enable Link and every plugin on the same lane finds each other. No hub, no cables, no routing to draw.",
-  },
-  {
-    n: "03",
-    title: "No latency",
-    body: "Only control data crosses the bus — never audio. Nothing to gain-stage, no bleed, no added delay.",
-  },
-];
-
 export default function HomePage() {
-  const nodes = plugins.map((p) => ({
-    num: p.num,
-    name: p.name,
-    role: p.role === "origin" ? "◈ origin" : "receives",
-    roleColor: p.role === "origin" ? "#3DA9FC" : "#6f6d63",
-  }));
-
   return (
     <div style={{ fontFamily: "'Space Grotesk', sans-serif", color: "#1D1C18", background: "#F8F8F5" }}>
       <SiteNav theme="light" home />
@@ -69,9 +44,6 @@ export default function HomePage() {
           <Link href="#pricing" style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, fontSize: 13, letterSpacing: "0.05em", background: "#1D1C18", color: "#F8F8F5", padding: "14px 28px", borderRadius: 3 }}>
             Get this release — ${COLLECTION_PRICE}
           </Link>
-          <Link href="#link" style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, fontSize: 13, letterSpacing: "0.05em", padding: "14px 24px", border: "1px solid #1D1C18", borderRadius: 3 }}>
-            How Prism Link works →
-          </Link>
         </div>
       </header>
 
@@ -95,94 +67,6 @@ export default function HomePage() {
           </p>
         </div>
         <CollectionPlayers />
-      </section>
-
-      {/* PRISM LINK */}
-      <section id="link" style={{ background: "#1D1C18", color: "#F8F8F5", marginTop: 80, padding: "104px 48px" }}>
-        <div style={{ maxWidth: 1180, margin: "0 auto" }}>
-          <div style={{ textAlign: "center", maxWidth: 720, margin: "0 auto" }}>
-            <div style={{ fontFamily: mono, fontSize: 12.5, letterSpacing: "0.22em", textTransform: "uppercase", color: "#3DA9FC", marginBottom: 22 }}>
-              The differentiator · Prism Link
-            </div>
-            <h2 style={{ fontSize: 56, fontWeight: 600, letterSpacing: "-0.04em", lineHeight: 1, margin: 0, color: "#F4EEE1" }}>
-              Every plugin
-              <br />
-              moves together.
-            </h2>
-            <p style={{ fontSize: 18, lineHeight: 1.65, color: "#b8b6ac", margin: "26px 0 0" }}>
-              Prism Link is a shared modulation lane between your Prism plugins. Set a movement once — an
-              envelope, an LFO, the groove — and the rest of the rack follows it in real time. No sidechain, no
-              routing, and no audio between tracks.
-            </p>
-          </div>
-
-          {/* diagram */}
-          <div style={{ maxWidth: 960, margin: "64px auto 0" }}>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(5,1fr)", gap: 16 }}>
-              {nodes.map((nd) => (
-                <div key={nd.num} style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                  <div style={{ width: "100%", background: "#1e1d18", border: "1px solid #34322a", borderRadius: 9, padding: "16px 14px", textAlign: "center" }}>
-                    <div style={{ fontFamily: mono, fontSize: 10, letterSpacing: "0.1em", color: "#6f6d63", marginBottom: 10 }}>{nd.num}</div>
-                    <svg viewBox="0 0 84 30" width="100%" height="24" preserveAspectRatio="none">
-                      <g fill="#3DA9FC" opacity="0.85">
-                        <rect x="4" y="10" width="4" height="10" rx="2" />
-                        <rect x="14" y="4" width="4" height="22" rx="2" />
-                        <rect x="24" y="13" width="4" height="4" rx="2" />
-                        <rect x="34" y="7" width="4" height="16" rx="2" />
-                        <rect x="44" y="2" width="4" height="26" rx="2" />
-                        <rect x="54" y="11" width="4" height="8" rx="2" />
-                        <rect x="64" y="6" width="4" height="18" rx="2" />
-                        <rect x="74" y="12" width="4" height="6" rx="2" />
-                      </g>
-                    </svg>
-                    <div style={{ fontSize: 15, fontWeight: 600, letterSpacing: "-0.01em", marginTop: 12 }}>{nd.name}</div>
-                    <div style={{ fontFamily: mono, fontSize: 9, letterSpacing: "0.1em", textTransform: "uppercase", marginTop: 6, color: nd.roleColor }}>
-                      {nd.role}
-                    </div>
-                  </div>
-                  <div style={{ width: 1, height: 34, background: "linear-gradient(#3DA9FC, rgba(61,169,252,0.15))" }} />
-                </div>
-              ))}
-            </div>
-            <div style={{ position: "relative", height: 56, border: "1px solid rgba(61,169,252,0.35)", background: "#191812", borderRadius: 10, display: "flex", alignItems: "center", padding: "0 22px", overflow: "hidden" }}>
-              <span style={{ fontFamily: mono, fontSize: 12, letterSpacing: "0.14em", textTransform: "uppercase", color: "#3DA9FC" }}>
-                ◈ Prism Link — shared modulation bus
-              </span>
-              <span style={{ marginLeft: "auto", fontFamily: mono, fontSize: 11, letterSpacing: "0.08em", color: "#6f6d63" }}>
-                control data · no audio
-              </span>
-              {[0, 1, 2].map((i) => (
-                <div
-                  key={i}
-                  style={{
-                    position: "absolute",
-                    top: "50%",
-                    left: 20,
-                    width: 9,
-                    height: 9,
-                    marginTop: -4.5,
-                    borderRadius: "50%",
-                    background: i === 1 ? "#E9D77A" : "#3DA9FC",
-                    boxShadow: `0 0 10px ${i === 1 ? "#E9D77A" : "#3DA9FC"}`,
-                    animation: "busPulse 3s linear infinite",
-                    animationDelay: `${i}s`,
-                  }}
-                />
-              ))}
-            </div>
-          </div>
-
-          {/* three points */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 40, maxWidth: 940, margin: "72px auto 0" }}>
-            {linkPoints.map((pt) => (
-              <div key={pt.n}>
-                <div style={{ fontFamily: mono, fontSize: 11, letterSpacing: "0.1em", color: "#3DA9FC", marginBottom: 14 }}>{pt.n}</div>
-                <h4 style={{ fontSize: 20, fontWeight: 600, letterSpacing: "-0.015em", margin: "0 0 10px" }}>{pt.title}</h4>
-                <p style={{ fontSize: 14.5, lineHeight: 1.6, color: "#a6a49a", margin: 0 }}>{pt.body}</p>
-              </div>
-            ))}
-          </div>
-        </div>
       </section>
 
       {/* PRICING */}

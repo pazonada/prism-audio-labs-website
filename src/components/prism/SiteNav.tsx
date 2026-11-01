@@ -16,7 +16,6 @@ export function SiteNav({
   const prefix = home ? "" : "/";
   const links = [
     { label: "Plugins", href: `${prefix}#plugins` },
-    { label: "Prism Link", href: `${prefix}#link` },
     { label: "Learn", href: "/learn" },
   ];
 
