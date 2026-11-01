@@ -3,20 +3,20 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "Prism — Plugins that move together.",
+    default: "Prism Kora — a modelled West African bridge harp",
     template: "%s | Prism Audio Labs",
   },
   description:
-    "Prism is a collection of five instruments built around a single idea: set a motion once, and the whole rack responds. Meet Prism Link — one shared modulation bus.",
+    "Kora is a 21-string West African harp, built as a physical model — so it answers to the way you play, instead of replaying the way someone else did. Four tunings, 1,030 patterns, about 110 MB.",
   metadataBase: new URL("https://prismaudiolabs.co"),
   openGraph: {
     type: "website",
     locale: "en_US",
     url: "https://prismaudiolabs.co",
     siteName: "Prism Audio Labs",
-    title: "Prism — Plugins that move together.",
+    title: "Prism Kora — a modelled West African bridge harp",
     description:
-      "Five instruments, one modulation bus. Set a motion once and the whole rack responds.",
+      "A physically-modelled kora. Four historical tunings, 1,030 patterns, 25 demos. Modelled, not sampled.",
   },
   robots: { index: true, follow: true },
 };
