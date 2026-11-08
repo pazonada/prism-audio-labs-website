@@ -16,7 +16,7 @@ const buyPerks = [
   "The complete instrument",
   "74 presets, 1,030 patterns",
   "VST3, AU and standalone",
-  "Three activations — studio, laptop, spare",
+  "Two activations — studio and laptop",
   "Free updates within version 1",
   "30-day return, no reason needed",
 ];
@@ -53,8 +53,8 @@ const licence = [
     body: "Use them as written or edit them. What you cannot do is redistribute the pattern set itself as a MIDI product.",
   },
   {
-    title: "Three machines",
-    body: "Enough for a studio, a laptop and a spare. Move an activation yourself if a machine dies; you do not need to ask us.",
+    title: "Two machines",
+    body: "Enough for a studio machine and a laptop. Move an activation yourself if a machine dies; you do not need to ask us.",
   },
   {
     title: "Offline after the first check",
@@ -158,7 +158,7 @@ export default function PricingPage() {
           {/* Buy */}
           <div style={{ background: "#F8F8F5", border: "1px solid #e3dfd5", borderRadius: 14, padding: 40, display: "flex", flexDirection: "column" }}>
             <div style={{ fontFamily: mono, fontSize: 12, letterSpacing: "0.14em", textTransform: "uppercase", color: "#8a897d", marginBottom: 16 }}>Buy</div>
-            <div style={{ fontSize: 58, fontWeight: 600, letterSpacing: "-0.04em", lineHeight: 0.9, marginBottom: 12 }}>[YOUR PRICE]</div>
+            <div style={{ fontSize: 58, fontWeight: 600, letterSpacing: "-0.04em", lineHeight: 0.9, marginBottom: 12 }}>$39</div>
             <p style={{ fontSize: 15, lineHeight: 1.6, color: "#57564c", margin: "0 0 28px" }}>One-off. Perpetual licence.</p>
             <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 32, color: "#3a3a33" }}>
               {buyPerks.map((t) => <Perk key={t}>{t}</Perk>)}
@@ -236,7 +236,7 @@ export default function PricingPage() {
 
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 16, padding: "18px 0", borderTop: "1px solid #e3dfd5", borderBottom: "1px solid #e3dfd5", marginBottom: 24, fontSize: 15 }}>
               <span style={{ color: "#3a3a33" }}>Prism Kora — perpetual licence</span>
-              <span style={{ fontWeight: 600 }}>[YOUR PRICE]</span>
+              <span style={{ fontWeight: 600 }}>$39</span>
             </div>
 
             <button type="button" style={{ ...btn, width: "100%", fontSize: 15, background: "#1D1C18", color: "#F8F8F5", padding: 15, borderRadius: 3, border: "none", cursor: "pointer" }}>

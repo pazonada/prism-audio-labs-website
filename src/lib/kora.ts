@@ -1,9 +1,9 @@
 // Kora site data. Copy is the current draft (kept verbatim per Bon — edits come
-// after Arya reviews the live site). Prices are placeholders: [YOUR PRICE].
+// after Arya reviews the live site). Price is Arya's: $39, one-off perpetual.
 
 export const PLUGIN_NAME = "Kora";
 export const BRAND = "Prism Audio Labs";
-export const PRICE = "[YOUR PRICE]";
+export const PRICE = "$39";
 export const TRIAL_DAYS = 14;
 
 export type Demo = {
