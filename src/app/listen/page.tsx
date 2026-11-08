@@ -3,6 +3,7 @@ import Link from "next/link";
 import { KoraNav } from "@/components/prism/KoraNav";
 import { KoraFooter } from "@/components/prism/KoraFooter";
 import { KoraAudioPlayer } from "@/components/prism/KoraAudioPlayer";
+import { KoraBand } from "@/components/prism/KoraMedia";
 import { demos, demoGroups, PRICE } from "@/lib/kora";
 
 const mono = "'IBM Plex Mono', monospace";
@@ -37,6 +38,13 @@ export default function ListenPage() {
           with volume.
         </p>
       </header>
+
+      {/* BAND — a player, silhouetted */}
+      <KoraBand
+        src="/images/kora/07-silhouette.jpg"
+        alt="Illustration: the backlit silhouette of a seated player holding a kora upright by its two posts against a sunset sky. The player is not identifiable."
+        position="center 45%"
+      />
 
       {demoGroups.map((g) => {
         const items = demos.filter((d) => d.group === g.id);

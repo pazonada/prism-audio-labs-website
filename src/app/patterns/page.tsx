@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { KoraNav } from "@/components/prism/KoraNav";
 import { KoraFooter } from "@/components/prism/KoraFooter";
+import { KoraFigure } from "@/components/prism/KoraMedia";
 
 const mono = "'IBM Plex Mono', monospace";
 const btn = { fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600 } as const;
@@ -144,6 +145,21 @@ export default function PatternsPage() {
           The note densities below are measured from the shipped patterns — not a stylistic claim, just what is in the
           files. They separate cleanly, which is a decent sign the tagging means something.
         </p>
+
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 24, marginBottom: 48 }}>
+          <KoraFigure
+            src="/images/kora/06-ranks.jpg"
+            alt="Illustration, close up looking down a kora's bridge: the strings fan out in two separate parallel ranks, one on each side, catching the light."
+            ratio="3 / 2"
+            caption="The two string ranks. Consecutive notes alternate sides, so a scale is two hands trading notes."
+          />
+          <KoraFigure
+            src="/images/kora/05-hands.jpg"
+            alt="Illustration, close up: two hands gripping the upright posts of a kora, playing the strings with thumbs and index fingers. The player is not identifiable."
+            ratio="3 / 2"
+            caption="Only thumbs and index fingers play — the thumbs usually hold the cycle while the index fingers break out of it."
+          />
+        </div>
 
         <div style={{ overflowX: "auto", marginBottom: 48 }}>
           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 15, minWidth: 640 }}>

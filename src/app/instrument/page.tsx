@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { KoraNav } from "@/components/prism/KoraNav";
 import { KoraFooter } from "@/components/prism/KoraFooter";
+import { KoraFigure } from "@/components/prism/KoraMedia";
 
 const mono = "'IBM Plex Mono', monospace";
 const btn = { fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600 } as const;
@@ -279,6 +280,22 @@ export default function InstrumentPage() {
             </div>
           </div>
 
+          {/* Two detail figures — the defining parts */}
+          <div style={{ marginTop: 56, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 24 }}>
+            <KoraFigure
+              src="/images/kora/03-calabash.jpg"
+              alt="Illustration, close up: the half-calabash gourd body of a kora, its cowhide head held down by a ring of hand-driven tacks, with the sound hole cut into the side of the gourd."
+              ratio="3 / 2"
+              caption="The gourd body and tacked cowhide head. The sound hole is in the side, not the face."
+            />
+            <KoraFigure
+              src="/images/kora/02-bridge.jpg"
+              alt="Illustration, close up: the tall notched upright bridge of a kora standing on the hide, with strings seated in notches down both of its sides so they run in two separate parallel rows."
+              ratio="3 / 2"
+              caption="The notched upright bridge — strings seated on both sides, in two separate ranks."
+            />
+          </div>
+
           {/* The bit that explains the music */}
           <div style={{ marginTop: 64, maxWidth: "44em" }}>
             <h3 style={{ margin: "0 0 20px", fontSize: 25, fontWeight: 600, letterSpacing: "-0.02em" }}>
@@ -305,6 +322,15 @@ export default function InstrumentPage() {
           {tuningIntro.map((p, i) => (
             <p key={i} style={{ margin: 0, fontSize: 16.5, lineHeight: 1.7, color: "#3a3a33" }}>{p}</p>
           ))}
+        </div>
+
+        <div style={{ marginBottom: 48 }}>
+          <KoraFigure
+            src="/images/kora/04-tuning-rings.jpg"
+            alt="Illustration, close up: a row of leather tuning rings wrapped around the neck of a kora, the near ones sharp and the far ones falling out of focus."
+            ratio="21 / 9"
+            caption="Tuning is done by sliding the leather rings along the neck — which is why changing mode is a job of minutes, and why the repertoire is organised around a handful of tunings."
+          />
         </div>
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 24 }}>

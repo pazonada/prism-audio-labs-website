@@ -2,6 +2,7 @@ import Link from "next/link";
 import { KoraNav } from "@/components/prism/KoraNav";
 import { KoraFooter } from "@/components/prism/KoraFooter";
 import { KoraAudioPlayer } from "@/components/prism/KoraAudioPlayer";
+import { KoraBand, KoraUIPlaceholder } from "@/components/prism/KoraMedia";
 import { demos, PRICE } from "@/lib/kora";
 
 const mono = "'IBM Plex Mono', monospace";
@@ -175,6 +176,14 @@ export default function HomePage() {
         </div>
       </header>
 
+      {/* HERO BAND — the instrument in the landscape */}
+      <KoraBand
+        src="/images/kora/01-hero.jpg"
+        alt="Illustration of a kora — a gourd-bodied West African harp with a tall notched bridge — standing in long grass against a low sun."
+        eager
+        position="center 40%"
+      />
+
       {/* WHY MODELLED */}
       <section style={{ background: "#fff", borderTop: "1px solid #e3dfd5", borderBottom: "1px solid #e3dfd5", padding: "80px 48px" }}>
         <div style={{ maxWidth: 1180, margin: "0 auto", display: "flex", flexWrap: "wrap", gap: 56 }}>
@@ -223,6 +232,28 @@ export default function HomePage() {
               </p>
             </article>
           ))}
+        </div>
+      </section>
+
+      {/* THE INTERFACE (placeholder — UI in design) */}
+      <section style={{ maxWidth: 1180, margin: "0 auto", padding: "0 48px 88px" }}>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 48, alignItems: "center" }}>
+          <div style={{ flex: "1 1 300px", minWidth: 0 }}>
+            <div style={{ fontFamily: mono, fontSize: 13, letterSpacing: "0.16em", textTransform: "uppercase", color: "#8a897d", marginBottom: 14 }}>
+              The interface
+            </div>
+            <h2 style={{ margin: "0 0 18px", fontSize: 32, fontWeight: 600, letterSpacing: "-0.03em", lineHeight: 1.2 }}>
+              One window, everything in reach
+            </h2>
+            <p style={{ margin: 0, fontSize: 16, lineHeight: 1.7, color: "#3a3a33" }}>
+              Every stage of the model — the pluck, the string, the body, the sympathetic strings — and the pattern
+              library sit in a single plugin window. The final interface is being designed now; a screenshot lands here
+              once it is settled.
+            </p>
+          </div>
+          <div style={{ flex: "999 1 480px", minWidth: 300 }}>
+            <KoraUIPlaceholder />
+          </div>
         </div>
       </section>
 
@@ -318,6 +349,13 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* LANDSCAPE BAND — the land the instrument comes from */}
+      <KoraBand
+        src="/images/kora/08-landscape.jpg"
+        alt="Illustration of a Sahel landscape at dusk — tall grass, an acacia and a distant baobab against a hazy sun."
+        position="center 55%"
+      />
 
       {/* CLOSING */}
       <section style={{ background: "#fff", borderTop: "1px solid #e3dfd5", padding: "96px 48px" }}>
